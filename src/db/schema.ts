@@ -1,0 +1,72 @@
+import { sql } from 'drizzle-orm';
+import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
+
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  clerkId: text('clerk_id').notNull().unique(),
+  email: text('email').notNull(),
+  name: text('name'),
+  stripeCustomerId: text('stripe_customer_id'),
+  subscriptionId: text('subscription_id'),
+  subscriptionStatus: text('subscription_status'),
+  priceId: text('price_id'),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export const subscriptions = sqliteTable('subscriptions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  stripeSubscriptionId: text('stripe_subscription_id').notNull().unique(),
+  stripeCustomerId: text('stripe_customer_id').notNull(),
+  stripePriceId: text('stripe_price_id').notNull(),
+  stripeCurrentPeriodEnd: integer('stripe_current_period_end', { mode: 'timestamp' }).notNull(),
+  status: text('status').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export const apiKeys = sqliteTable('api_keys', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  name: text('name').notNull(),
+  key: text('key').notNull().unique(),
+  lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export const usageTracking = sqliteTable('usage_tracking', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  endpoint: text('endpoint').notNull(),
+  timestamp: integer('timestamp', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  responseTime: integer('response_time'),
+  statusCode: integer('status_code'),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Subscription = typeof subscriptions.$inferSelect;
+export type NewSubscription = typeof subscriptions.$inferInsert;
+export type ApiKey = typeof apiKeys.$inferSelect;
+export type NewApiKey = typeof apiKeys.$inferInsert;
+export type UsageTracking = typeof usageTracking.$inferSelect;
+export type NewUsageTracking = typeof usageTracking.$inferInsert;
