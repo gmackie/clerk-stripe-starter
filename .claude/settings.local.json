@@ -4,7 +4,17 @@
       "Bash(find:*)",
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run:*)",
+      "Bash(chmod:*)",
+      "Bash(npx tsx:*)",
+      "Bash(./run-e2e-tests.sh:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(ngrok:*)",
+      "Bash(grep:*)",
+      "Bash(rm:*)",
+      "Bash(./add-env-variables.sh:*)"
     ],
     "deny": []
   }

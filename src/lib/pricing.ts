@@ -1,5 +1,24 @@
 export const PRICING_TIERS = [
   {
+    name: 'Free',
+    id: 'free',
+    description: 'Get started with basic features',
+    features: [
+      '1 project',
+      '100 API calls/month',
+      'Community support',
+      'Basic features',
+    ],
+    price: {
+      monthly: 0,
+      annually: 0,
+    },
+    stripePriceIds: {
+      monthly: '',
+      annually: '',
+    },
+  },
+  {
     name: 'Starter',
     id: 'starter',
     description: 'Perfect for individuals and small projects',

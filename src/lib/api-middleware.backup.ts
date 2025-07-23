@@ -11,7 +11,7 @@ interface ApiMiddlewareOptions {
   rateLimit?: boolean;
 }
 
-export function withApiMiddleware(
+export async function withApiMiddleware(
   handler: (req: NextRequest, context: { userId: string; subscriptionTier: string }) => Promise<NextResponse>,
   options: ApiMiddlewareOptions = { requireAuth: true, rateLimit: true }
 ) {
@@ -20,73 +20,71 @@ export function withApiMiddleware(
     let userId: string | null = null;
     let subscriptionTier = 'free';
     let statusCode = 200;
-    let response: NextResponse;
 
     try {
-      // Step 1: Handle authentication if required
+      // Authentication
       if (options.requireAuth) {
-        // Check for API key first
         const authHeader = req.headers.get('authorization');
         
         if (authHeader) {
+          // API key authentication
           const apiKeyResult = await validateApiKey(authHeader);
           if (!apiKeyResult.isValid || !apiKeyResult.userId) {
-            response = NextResponse.json(
+            statusCode = 401;
+            return NextResponse.json(
               { error: apiKeyResult.error || 'Invalid API key' },
               { status: 401 }
             );
-            statusCode = 401;
-            return response;
           }
           userId = apiKeyResult.userId;
         } else {
-          // Try Clerk authentication
-          const clerkAuth = await auth();
-          userId = clerkAuth.userId;
+          // Clerk authentication
+          try {
+            const clerkAuth = await auth();
+            userId = clerkAuth.userId;
+          } catch (clerkError) {
+            console.error('Clerk auth error:', clerkError);
+            // Continue without userId - will be caught below
+          }
         }
 
-        // If no userId at this point, return 401
         if (!userId) {
-          response = NextResponse.json(
+          statusCode = 401;
+          return NextResponse.json(
             { error: 'Unauthorized - Please sign in or provide an API key' },
             { status: 401 }
           );
-          statusCode = 401;
-          return response;
         }
 
-        // Step 2: Get user subscription tier
-        try {
-          const user = await db
-            .select({ 
-              subscriptionStatus: users.subscriptionStatus,
-              priceId: users.priceId 
-            })
-            .from(users)
-            .where(eq(users.clerkId, userId))
-            .limit(1);
+        // Get user subscription tier (only if we have a userId)
+        const user = await db
+          .select({ 
+            subscriptionStatus: users.subscriptionStatus,
+            priceId: users.priceId 
+          })
+          .from(users)
+          .where(eq(users.clerkId, userId))
+          .limit(1);
 
-          if (user.length > 0 && user[0].subscriptionStatus === 'active') {
-            if (user[0].priceId?.includes('enterprise')) {
-              subscriptionTier = 'enterprise';
-            } else if (user[0].priceId?.includes('pro')) {
-              subscriptionTier = 'professional';
-            } else if (user[0].priceId?.includes('starter')) {
-              subscriptionTier = 'starter';
-            }
+        if (user.length > 0 && user[0].subscriptionStatus === 'active') {
+          // Map price ID to tier - this is simplified, you might want to improve this
+          if (user[0].priceId?.includes('enterprise')) {
+            subscriptionTier = 'enterprise';
+          } else if (user[0].priceId?.includes('pro')) {
+            subscriptionTier = 'professional';
+          } else if (user[0].priceId?.includes('starter')) {
+            subscriptionTier = 'starter';
           }
-        } catch (dbError) {
-          console.error('Database error fetching user subscription:', dbError);
-          // Continue with free tier if database fails
         }
       }
 
-      // Step 3: Handle rate limiting if enabled
+      // Rate limiting
       if (options.rateLimit && userId) {
         const rateLimitResult = await checkRateLimit(userId, subscriptionTier);
         
         if (!rateLimitResult.success) {
-          response = NextResponse.json(
+          statusCode = 429;
+          return NextResponse.json(
             { 
               error: 'Rate limit exceeded',
               limit: rateLimitResult.limit,
@@ -102,29 +100,30 @@ export function withApiMiddleware(
               }
             }
           );
-          statusCode = 429;
-          return response;
         }
 
-        // Call handler with rate limit headers
-        response = await handler(req, { userId: userId!, subscriptionTier });
+        // Add rate limit headers to successful responses
+        const response = await handler(req, { userId: userId!, subscriptionTier });
         
         if (rateLimitResult.limit) {
           response.headers.set('X-RateLimit-Limit', String(rateLimitResult.limit));
           response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining || 0));
           response.headers.set('X-RateLimit-Reset', String(rateLimitResult.reset || 0));
         }
-      } else {
-        // Call handler without rate limiting
-        response = await handler(req, { userId: userId || '', subscriptionTier });
+
+        statusCode = response.status;
+        return response;
       }
 
+      // Call handler without rate limiting
+      const response = await handler(req, { userId: userId || '', subscriptionTier });
       statusCode = response.status;
       return response;
 
     } catch (error) {
       console.error('API middleware error:', error);
-      response = NextResponse.json(
+      statusCode = 500;
+      return NextResponse.json(
         { 
           error: 'Internal server error',
           message: error instanceof Error ? error.message : 'Unknown error',
@@ -132,19 +131,13 @@ export function withApiMiddleware(
         },
         { status: 500 }
       );
-      statusCode = 500;
-      return response;
     } finally {
-      // Track API usage if we have both auth header and userId
-      try {
-        const authHeader = req.headers.get('authorization');
-        if (authHeader && userId && statusCode) {
-          const responseTime = Date.now() - startTime;
-          const endpoint = new URL(req.url).pathname;
-          await trackApiUsage(userId, endpoint, responseTime, statusCode);
-        }
-      } catch (trackError) {
-        console.error('Error tracking API usage:', trackError);
+      // Track API usage
+      const authHeader = req.headers.get('authorization');
+      if (authHeader && userId) {
+        const responseTime = Date.now() - startTime;
+        const endpoint = new URL(req.url).pathname;
+        trackApiUsage(userId, endpoint, responseTime, statusCode).catch(console.error);
       }
     }
   };

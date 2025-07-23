@@ -10,6 +10,10 @@ export const users = sqliteTable('users', {
   subscriptionId: text('subscription_id'),
   subscriptionStatus: text('subscription_status'),
   priceId: text('price_id'),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
+  preferences: text('preferences'), // JSON string for user preferences
+  metadata: text('metadata'), // JSON string for additional metadata
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),

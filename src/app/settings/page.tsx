@@ -7,34 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ApiKeysManager } from '@/components/settings/api-keys';
 import { BillingHistory } from '@/components/settings/billing-history';
+import { ProfileForm } from '@/components/settings/profile-form';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
-  const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    const formData = new FormData(e.currentTarget);
-    const firstName = formData.get('firstName') as string;
-    const lastName = formData.get('lastName') as string;
-
-    try {
-      await user?.update({
-        firstName,
-        lastName,
-      });
-      toast.success('Profile updated successfully');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <PageWrapper>
       <div className="min-h-screen bg-gray-50 py-12">
@@ -56,55 +32,7 @@ export default function SettingsPage() {
               </TabsList>
 
               <TabsContent value="profile">
-                <div>
-                  <h2 className="text-lg font-semibold mb-4">Profile Information</h2>
-                  <form onSubmit={handleUpdateProfile} className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          defaultValue={user?.firstName || ''}
-                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          defaultValue={user?.lastName || ''}
-                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        defaultValue={user?.primaryEmailAddress?.emailAddress || ''}
-                        disabled
-                        className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm cursor-not-allowed"
-                      />
-                      <p className="mt-1 text-xs text-gray-500">
-                        Email cannot be changed here. Use Clerk&apos;s email management.
-                      </p>
-                    </div>
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : 'Save Changes'}
-                    </Button>
-                  </form>
-                </div>
+                <ProfileForm />
               </TabsContent>
 
               <TabsContent value="billing">

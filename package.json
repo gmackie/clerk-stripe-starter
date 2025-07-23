@@ -14,6 +14,9 @@
   "dependencies": {
     "@clerk/nextjs": "^6.25.4",
     "@libsql/client": "^0.15.10",
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
     "@stripe/stripe-js": "^7.5.0",
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.35.1",
@@ -24,7 +27,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.5.2",
-    "stripe": "^18.3.0"
+    "stripe": "^18.3.0",
+    "svix": "^1.69.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -35,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5"
   }
 }
