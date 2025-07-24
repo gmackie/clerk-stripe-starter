@@ -1,0 +1,21 @@
+# Add these missing environment variables to your .env.local file
+
+# Clerk Webhook Secret (get from Clerk Dashboard > Webhooks after creating endpoint)
+CLERK_WEBHOOK_SECRET=whsec_
+
+# Stripe Webhook Secret (get from Stripe Dashboard > Webhooks or stripe listen command)
+STRIPE_WEBHOOK_SECRET=whsec_
+
+# Stripe Price IDs - Create these in Stripe Dashboard > Products
+# Or use test price IDs for development
+NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY=price_1QeGqrIOlmtpIvHKYgN3zN29
+NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY=price_1QeGr5IOlmtpIvHKo4m6kGRj
+NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY=price_1QeGrJIOlmtpIvHKBgJWanPZ
+NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY=price_1QeGrYIOlmtpIvHKm8ZSz7jU
+NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY=price_1QeGrlIOlmtpIvHKNFQYfNQq
+NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY=price_1QeGryIOlmtpIvHKXQMFqGzR
+
+# Optional: Upstash Redis for rate limiting
+# Get from https://upstash.com (has free tier)
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=

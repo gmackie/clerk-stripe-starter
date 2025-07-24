@@ -14,7 +14,13 @@
       "Bash(ngrok:*)",
       "Bash(grep:*)",
       "Bash(rm:*)",
-      "Bash(./add-env-variables.sh:*)"
+      "Bash(./add-env-variables.sh:*)",
+      "Bash(ls:*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

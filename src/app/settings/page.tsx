@@ -6,7 +6,6 @@ import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ApiKeysManager } from '@/components/settings/api-keys';
-import { BillingHistory } from '@/components/settings/billing-history';
 import { ProfileForm } from '@/components/settings/profile-form';
 import toast from 'react-hot-toast';
 
@@ -36,7 +35,46 @@ export default function SettingsPage() {
               </TabsContent>
 
               <TabsContent value="billing">
-                <BillingHistory />
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-2">Billing & Subscription</h2>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Manage your subscription, view invoices, and update payment methods.
+                    </p>
+                    <Button 
+                      onClick={() => window.location.href = '/settings/billing'}
+                      variant="primary"
+                    >
+                      Manage Billing
+                    </Button>
+                  </div>
+                  
+                  <div className="border-t pt-6">
+                    <h3 className="text-md font-medium mb-2">Quick Actions</h3>
+                    <div className="space-y-2">
+                      <Button 
+                        variant="secondary" 
+                        className="w-full justify-start"
+                        onClick={() => window.location.href = '/pricing'}
+                      >
+                        View Plans & Pricing
+                      </Button>
+                      <Button 
+                        variant="secondary" 
+                        className="w-full justify-start"
+                        onClick={async () => {
+                          const response = await fetch('/api/stripe/customer-portal', {
+                            method: 'POST',
+                          });
+                          const { url } = await response.json();
+                          if (url) window.location.href = url;
+                        }}
+                      >
+                        Open Stripe Customer Portal
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="notifications">

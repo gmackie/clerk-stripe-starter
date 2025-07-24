@@ -1,0 +1,194 @@
+name: Deploy to starter.gmac.io
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize ]
+
+env:
+  REGISTRY: ci.gmac.io
+  IMAGE_NAME: clerk-stripe-starter
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Next.js app
+      run: npm run build
+      env:
+        # Build-time environment variables
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+        NEXT_PUBLIC_APP_URL: https://starter.gmac.io
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Gitea Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ gitea.actor }}
+        password: ${{ secrets.GITEA_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+        cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+    - name: Deploy to K3s
+      if: github.ref == 'refs/heads/main'
+      env:
+        KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
+      run: |
+        # Setup kubeconfig
+        echo "$KUBECONFIG_CONTENT" | base64 -d > /tmp/kubeconfig
+        export KUBECONFIG=/tmp/kubeconfig
+        
+        # Create namespace if it doesn't exist
+        kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
+        
+        # Create image pull secret for Gitea registry
+        kubectl create secret docker-registry gitea-registry \
+          --docker-server=${{ env.REGISTRY }} \
+          --docker-username=${{ gitea.actor }} \
+          --docker-password=${{ secrets.GITEA_TOKEN }} \
+          --namespace=production \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        # Create secret for environment variables
+        kubectl create secret generic clerk-stripe-starter-env \
+          --from-literal=CLERK_SECRET_KEY="${{ secrets.CLERK_SECRET_KEY }}" \
+          --from-literal=CLERK_WEBHOOK_SECRET="${{ secrets.CLERK_WEBHOOK_SECRET }}" \
+          --from-literal=STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+          --from-literal=STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
+          --from-literal=TURSO_DATABASE_URL="${{ secrets.TURSO_DATABASE_URL }}" \
+          --from-literal=TURSO_AUTH_TOKEN="${{ secrets.TURSO_AUTH_TOKEN }}" \
+          --from-literal=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" \
+          --from-literal=NEXT_PUBLIC_APP_URL="https://starter.gmac.io" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPE_PRICE_ID_STARTER_MONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPE_PRICE_ID_STARTER_YEARLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPE_PRICE_ID_PRO_MONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPE_PRICE_ID_PRO_YEARLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_MONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_YEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPE_PRICE_ID_STARTER_MONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPE_PRICE_ID_STARTER_YEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPE_PRICE_ID_PRO_MONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPE_PRICE_ID_PRO_YEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_MONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_YEARLY }}" \
+          --from-literal=UPSTASH_REDIS_REST_URL="${{ secrets.UPSTASH_REDIS_REST_URL }}" \
+          --from-literal=UPSTASH_REDIS_REST_TOKEN="${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+          --namespace=production \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        # Create deployment manifest
+        cat <<EOF > deployment.yaml
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: clerk-stripe-starter
+          namespace: production
+          labels:
+            app: clerk-stripe-starter
+            environment: production
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              app: clerk-stripe-starter
+          template:
+            metadata:
+              labels:
+                app: clerk-stripe-starter
+            spec:
+              containers:
+              - name: app
+                image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+                ports:
+                - containerPort: 3000
+                envFrom:
+                - secretRef:
+                    name: clerk-stripe-starter-env
+                env:
+                - name: NODE_ENV
+                  value: production
+                - name: PORT
+                  value: "3000"
+                resources:
+                  requests:
+                    memory: "256Mi"
+                    cpu: "200m"
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+              imagePullSecrets:
+              - name: gitea-registry
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: clerk-stripe-starter
+          namespace: production
+        spec:
+          selector:
+            app: clerk-stripe-starter
+          ports:
+          - port: 80
+            targetPort: 3000
+        ---
+        apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: clerk-stripe-starter
+          namespace: production
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        spec:
+          ingressClassName: nginx
+          tls:
+          - hosts:
+            - starter.gmac.io
+            secretName: clerk-stripe-starter-tls
+          rules:
+          - host: starter.gmac.io
+            http:
+              paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: clerk-stripe-starter
+                    port:
+                      number: 80
+        EOF
+        
+        # Apply deployment
+        kubectl apply -f deployment.yaml
+        
+        # Wait for deployment
+        kubectl rollout status deployment/clerk-stripe-starter \
+          -n production \
+          --timeout=300s
+        
+        echo "✅ Deployed to https://starter.gmac.io"

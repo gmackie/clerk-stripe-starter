@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Clerk & Stripe SaaS Starter Kit
 
-## Getting Started
+A production-ready SaaS starter template with authentication, payments, and subscription management.
 
-First, run the development server:
+🚀 **Live Demo**: [https://starter.gmac.io](https://starter.gmac.io)
+
+## Features
+
+✅ **Authentication & User Management**
+- Clerk authentication with email/social logins
+- User profile management
+- API key generation for external access
+
+✅ **Payments & Subscriptions**
+- Stripe integration for payments
+- Multiple pricing tiers (Free, Starter, Pro, Enterprise)
+- Subscription upgrades/downgrades
+- Invoice history and billing management
+
+✅ **Developer Experience**
+- Next.js 15 with App Router
+- TypeScript for type safety
+- Tailwind CSS v4 for styling
+- Turso database with Drizzle ORM
+- Rate limiting with Upstash Redis (optional)
+
+✅ **Production Ready**
+- Webhook handling for Clerk & Stripe
+- Development endpoints for local testing
+- Comprehensive error handling
+- Secure API middleware
+
+## Quick Start
+
+1. **Clone and install dependencies**
+   ```bash
+   git clone https://ci.gmac.io/mackieg/clerk-stripe-starter.git
+   cd clerk-stripe-starter
+   npm install
+   ```
+
+2. **Set up environment variables**
+   ```bash
+   cp .env.local.example .env.local
+   # Edit .env.local with your keys
+   ```
+
+3. **Set up the database**
+   ```bash
+   npm run db:push
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open [http://localhost:3000](http://localhost:3000)**
+
+## Environment Variables
+
+Required environment variables:
+- **Clerk**: Authentication keys and webhook secret
+- **Stripe**: API keys, webhook secret, and price IDs
+- **Turso**: Database URL and auth token
+- **Redis** (optional): Upstash credentials for rate limiting
+
+See `.env.local.example` for a complete list.
+
+## Deployment
+
+This project is set up for automated deployment to Kubernetes:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+./quick-deploy.sh
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will:
+1. Create a Gitea repository
+2. Add all required secrets
+3. Deploy to your K3s cluster
+4. Configure SSL automatically
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/              # Next.js app router pages
+├── components/       # React components
+├── db/              # Database schema and config
+├── lib/             # Utility functions and configs
+└── middleware.ts    # Auth middleware
+```
 
-## Learn More
+## Key Features
 
-To learn more about Next.js, take a look at the following resources:
+### Authentication
+- Email and social login via Clerk
+- Protected routes with middleware
+- User profile management
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Payments
+- Stripe Checkout for subscriptions
+- Customer portal for billing management
+- Webhook handling for payment events
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### API
+- Rate-limited API endpoints
+- API key authentication
+- Usage tracking per user
 
-## Deploy on Vercel
+### Developer Tools
+- Development endpoints for testing
+- Comprehensive logging
+- TypeScript throughout
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For detailed documentation, see:
+- [Deployment Guide](./DEPLOYMENT.md)
+- [API Documentation](./src/app/api/README.md)
+- [Database Schema](./src/db/schema.ts)
+
+## License
+
+MIT

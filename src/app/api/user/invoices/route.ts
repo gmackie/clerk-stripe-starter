@@ -21,7 +21,8 @@ export async function GET() {
     // Fetch invoices from Stripe
     const invoices = await stripe.invoices.list({
       customer: user[0].stripeCustomerId,
-      limit: 10,
+      limit: 20,
+      expand: ['data.subscription'],
     });
 
     const formattedInvoices = invoices.data.map(invoice => ({
@@ -31,6 +32,8 @@ export async function GET() {
       status: invoice.status,
       created: invoice.created,
       invoicePdf: invoice.invoice_pdf,
+      description: invoice.description || `${invoice.lines.data[0]?.description || 'Subscription'}`,
+      number: invoice.number,
     }));
 
     return NextResponse.json({ invoices: formattedInvoices });
