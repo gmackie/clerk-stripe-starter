@@ -5,7 +5,14 @@ import { users, subscriptions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+let stripe: Stripe | null = null;
+
+function getStripe() {
+  if (!stripe) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  }
+  return stripe;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     // If user has no subscription, create a checkout session
     if (!currentUser.subscriptionId) {
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         customer: currentUser.stripeCustomerId || undefined,
         payment_method_types: ['card'],
         line_items: [{ price: newPriceId, quantity: 1 }],
@@ -47,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get current subscription from Stripe
-    const subscription = await stripe.subscriptions.retrieve(currentUser.subscriptionId);
+    const subscription = await getStripe().subscriptions.retrieve(currentUser.subscriptionId);
     
     // Check if it's actually a change
     const currentPriceId = subscription.items.data[0]?.price.id;
@@ -61,7 +68,7 @@ export async function POST(req: NextRequest) {
     // Handle downgrade to free (cancel subscription)
     if (newPriceId === 'free') {
       // Cancel at period end to allow user to use paid features until end of billing period
-      const updatedSubscription = await stripe.subscriptions.update(
+      const updatedSubscription = await getStripe().subscriptions.update(
         currentUser.subscriptionId,
         { cancel_at_period_end: true }
       );
@@ -85,7 +92,7 @@ export async function POST(req: NextRequest) {
     // For upgrades/downgrades between paid plans
     try {
       // Update the subscription immediately with proration
-      const updatedSubscription = await stripe.subscriptions.update(
+      const updatedSubscription = await getStripe().subscriptions.update(
         currentUser.subscriptionId,
         {
           cancel_at_period_end: false, // Remove any pending cancellation
@@ -138,7 +145,7 @@ export async function POST(req: NextRequest) {
       
       // If there's a payment issue, redirect to customer portal
       if (stripeError.code === 'payment_required') {
-        const portalSession = await stripe.billingPortal.sessions.create({
+        const portalSession = await getStripe().billingPortal.sessions.create({
           customer: currentUser.stripeCustomerId!,
           return_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
         });

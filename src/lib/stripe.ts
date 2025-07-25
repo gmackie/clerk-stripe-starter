@@ -1,7 +1,22 @@
 import Stripe from 'stripe';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  typescript: true,
+let _stripe: Stripe | null = null;
+
+function getStripeInstance() {
+  if (!_stripe && process.env.STRIPE_SECRET_KEY) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      typescript: true,
+    });
+  }
+  return _stripe!;
+}
+
+// Export stripe as a getter to maintain compatibility
+export const stripe = new Proxy({} as Stripe, {
+  get(_, prop) {
+    const stripeInstance = getStripeInstance();
+    return stripeInstance[prop as keyof Stripe];
+  },
 });
 
 export const getStripeSession = async (priceId: string, userId: string, email: string) => {

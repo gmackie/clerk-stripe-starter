@@ -4,24 +4,37 @@ import Stripe from 'stripe';
 // Load environment variables
 config({ path: '.env.local' });
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+let stripe: Stripe | null = null;
+
+function getStripe() {
+  if (!stripe && process.env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripe;
+}
 
 async function createStripeProducts() {
   console.log('🚀 Setting up Stripe products and prices...\n');
 
+  const stripeClient = getStripe();
+  if (!stripeClient) {
+    console.error('❌ Stripe API key not found');
+    return;
+  }
+
   try {
     // Create products
-    const starterProduct = await stripe.products.create({
+    const starterProduct = await stripeClient.products.create({
       name: 'Starter Plan',
       description: 'Perfect for individuals and small projects',
     });
 
-    const proProduct = await stripe.products.create({
+    const proProduct = await stripeClient.products.create({
       name: 'Professional Plan',
       description: 'For growing teams and businesses',
     });
 
-    const enterpriseProduct = await stripe.products.create({
+    const enterpriseProduct = await stripeClient.products.create({
       name: 'Enterprise Plan',
       description: 'For large organizations with custom needs',
     });
