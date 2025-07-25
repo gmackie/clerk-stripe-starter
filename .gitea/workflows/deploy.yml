@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: ci.gmac.io
   # Docker image names must be lowercase
-  IMAGE_NAME: ${{ gitea.repository }}
+  IMAGE_NAME: mackieg/clerk-stripe-starter
 
 jobs:
   build-and-deploy:
@@ -41,7 +41,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ gitea.actor }}
-        password: ${{ secrets.GITEA_TOKEN }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
@@ -76,7 +76,7 @@ jobs:
         kubectl create secret docker-registry gitea-registry \
           --docker-server=${{ env.REGISTRY }} \
           --docker-username=${{ gitea.actor }} \
-          --docker-password=${{ secrets.GITEA_TOKEN }} \
+          --docker-password=${{ secrets.GITHUB_TOKEN }} \
           --namespace=production \
           --dry-run=client -o yaml | kubectl apply -f -
         
