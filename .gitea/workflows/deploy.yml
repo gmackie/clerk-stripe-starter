@@ -8,7 +8,8 @@ on:
 
 env:
   REGISTRY: ci.gmac.io
-  IMAGE_NAME: clerk-stripe-starter
+  # Docker image names must be lowercase
+  IMAGE_NAME: ${{ gitea.repository }}
 
 jobs:
   build-and-deploy:
@@ -52,6 +53,12 @@ jobs:
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        kubectl version --client
 
     - name: Deploy to K3s
       if: github.ref == 'refs/heads/main'
