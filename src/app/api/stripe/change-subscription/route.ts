@@ -5,9 +5,7 @@ import { users, subscriptions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
@@ -131,7 +129,7 @@ export async function POST(req: NextRequest) {
         subscription: {
           id: updatedSubscription.id,
           status: updatedSubscription.status,
-          currentPeriodEnd: new Date(updatedSubscription.current_period_end * 1000),
+          currentPeriodEnd: new Date((updatedSubscription as any).current_period_end * 1000),
         },
         type: isUpgrade ? 'upgrade' : 'change',
       });

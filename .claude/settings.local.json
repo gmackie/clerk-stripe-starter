@@ -20,7 +20,8 @@
       "Bash(pip3 install:*)",
       "Bash(git push:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(echo \"Checking for kubeconfig files...\" find /Volumes/dev/gmac-io-ci -name \"*kube*\" -type f)"
     ],
     "deny": []
   }
