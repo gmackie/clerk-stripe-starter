@@ -30,7 +30,7 @@ jobs:
       run: npm run build
       env:
         # Build-time environment variables
-        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXTPUBLICCLERKPUBLISHABLEKEY }}
         NEXT_PUBLIC_APP_URL: https://starter.gmac.io
 
     - name: Set up Docker Buildx
@@ -41,7 +41,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ gitea.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GITEATOKEN }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
@@ -76,35 +76,35 @@ jobs:
         kubectl create secret docker-registry gitea-registry \
           --docker-server=${{ env.REGISTRY }} \
           --docker-username=${{ gitea.actor }} \
-          --docker-password=${{ secrets.GITHUB_TOKEN }} \
+          --docker-password=${{ secrets.GITEATOKEN }} \
           --namespace=production \
           --dry-run=client -o yaml | kubectl apply -f -
         
         # Create secret for environment variables
         kubectl create secret generic clerk-stripe-starter-env \
-          --from-literal=CLERK_SECRET_KEY="${{ secrets.CLERK_SECRET_KEY }}" \
-          --from-literal=CLERK_WEBHOOK_SECRET="${{ secrets.CLERK_WEBHOOK_SECRET }}" \
-          --from-literal=STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
-          --from-literal=STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
-          --from-literal=TURSO_DATABASE_URL="${{ secrets.TURSO_DATABASE_URL }}" \
-          --from-literal=TURSO_AUTH_TOKEN="${{ secrets.TURSO_AUTH_TOKEN }}" \
-          --from-literal=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" \
+          --from-literal=CLERK_SECRET_KEY="${{ secrets.CLERKSECRETKEY }}" \
+          --from-literal=CLERK_WEBHOOK_SECRET="${{ secrets.CLERKWEBHOOKSECRET }}" \
+          --from-literal=STRIPE_SECRET_KEY="${{ secrets.STRIPESECRETKEY }}" \
+          --from-literal=STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPEWEBHOOKSECRET }}" \
+          --from-literal=TURSO_DATABASE_URL="${{ secrets.TURSODATABASEURL }}" \
+          --from-literal=TURSO_AUTH_TOKEN="${{ secrets.TURSOAUTHTOKEN }}" \
+          --from-literal=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXTPUBLICCLERKPUBLISHABLEKEY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="${{ secrets.NEXTPUBLICSTRIPEPUBLISHABLEKEY }}" \
           --from-literal=NEXT_PUBLIC_APP_URL="https://starter.gmac.io" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPE_PRICE_ID_STARTER_MONTHLY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPE_PRICE_ID_STARTER_YEARLY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPE_PRICE_ID_PRO_MONTHLY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPE_PRICE_ID_PRO_YEARLY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_MONTHLY }}" \
-          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_YEARLY }}" \
-          --from-literal=STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPE_PRICE_ID_STARTER_MONTHLY }}" \
-          --from-literal=STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPE_PRICE_ID_STARTER_YEARLY }}" \
-          --from-literal=STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPE_PRICE_ID_PRO_MONTHLY }}" \
-          --from-literal=STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPE_PRICE_ID_PRO_YEARLY }}" \
-          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_MONTHLY }}" \
-          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPE_PRICE_ID_ENTERPRISE_YEARLY }}" \
-          --from-literal=UPSTASH_REDIS_REST_URL="${{ secrets.UPSTASH_REDIS_REST_URL }}" \
-          --from-literal=UPSTASH_REDIS_REST_TOKEN="${{ secrets.UPSTASH_REDIS_REST_TOKEN }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPEPRICEIDSTARTERMONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPEPRICEIDSTARTERYEARLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPEPRICEIDPROMONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPEPRICEIDPROYEARLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPEPRICEIDENTERPRISEMONTHLY }}" \
+          --from-literal=NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPEPRICEIDENTERPRISEYEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_STARTER_MONTHLY="${{ secrets.STRIPEPRICEIDSTARTERMONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_STARTER_YEARLY="${{ secrets.STRIPEPRICEIDSTARTERYEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_PRO_MONTHLY="${{ secrets.STRIPEPRICEIDPROMONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_PRO_YEARLY="${{ secrets.STRIPEPRICEIDPROYEARLY }}" \
+          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_MONTHLY="${{ secrets.STRIPEPRICEIDENTERPRISEMONTHLY }}" \
+          --from-literal=STRIPE_PRICE_ID_ENTERPRISE_YEARLY="${{ secrets.STRIPEPRICEIDENTERPRISEYEARLY }}" \
+          --from-literal=UPSTASH_REDIS_REST_URL="${{ secrets.UPSTASHREDISRESTURL }}" \
+          --from-literal=UPSTASH_REDIS_REST_TOKEN="${{ secrets.UPSTASHREDISRESTTOKEN }}" \
           --namespace=production \
           --dry-run=client -o yaml | kubectl apply -f -
         
