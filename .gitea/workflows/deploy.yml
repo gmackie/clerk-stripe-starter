@@ -23,29 +23,6 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build Next.js app
-      run: npm run build
-      env:
-        # Build-time environment variables
-        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXTPUBLICCLERKPUBLISHABLEKEY }}
-        NEXT_PUBLIC_APP_URL: https://starter.gmac.io
-        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXTPUBLICSTRIPEPUBLISHABLEKEY }}
-        # Server-side env vars needed for build
-        CLERK_SECRET_KEY: ${{ secrets.CLERKSECRETKEY }}
-        STRIPE_SECRET_KEY: ${{ secrets.STRIPESECRETKEY }}
-        TURSO_DATABASE_URL: ${{ secrets.TURSODATABASEURL }}
-        TURSO_AUTH_TOKEN: ${{ secrets.TURSOAUTHTOKEN }}
-        # Price IDs
-        NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDSTARTERMONTHLY }}
-        NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDSTARTERYEARLY }}
-        NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDPROMONTHLY }}
-        NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDPROYEARLY }}
-        NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDENTERPRISEMONTHLY }}
-        NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY: ${{ secrets.NEXTPUBLICSTRIPEPRICEIDENTERPRISEYEARLY }}
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
@@ -64,6 +41,20 @@ jobs:
         tags: |
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        build-args: |
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXTPUBLICCLERKPUBLISHABLEKEY }}
+          NEXT_PUBLIC_APP_URL=https://starter.gmac.io
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXTPUBLICSTRIPEPUBLISHABLEKEY }}
+          CLERK_SECRET_KEY=${{ secrets.CLERKSECRETKEY }}
+          STRIPE_SECRET_KEY=${{ secrets.STRIPESECRETKEY }}
+          TURSO_DATABASE_URL=${{ secrets.TURSODATABASEURL }}
+          TURSO_AUTH_TOKEN=${{ secrets.TURSOAUTHTOKEN }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDSTARTERMONTHLY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDSTARTERYEARLY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDPROMONTHLY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDPROYEARLY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDENTERPRISEMONTHLY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY=${{ secrets.NEXTPUBLICSTRIPEPRICEIDENTERPRISEYEARLY }}
         cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
         cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 
