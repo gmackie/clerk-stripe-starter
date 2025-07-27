@@ -44,14 +44,14 @@ async function createStripeProducts() {
     // Create prices
     const prices = await Promise.all([
       // Starter prices
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: starterProduct.id,
         unit_amount: 900, // $9.00
         currency: 'usd',
         recurring: { interval: 'month' },
         nickname: 'Starter Monthly',
       }),
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: starterProduct.id,
         unit_amount: 9000, // $90.00
         currency: 'usd',
@@ -60,14 +60,14 @@ async function createStripeProducts() {
       }),
 
       // Professional prices
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: proProduct.id,
         unit_amount: 2900, // $29.00
         currency: 'usd',
         recurring: { interval: 'month' },
         nickname: 'Professional Monthly',
       }),
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: proProduct.id,
         unit_amount: 29000, // $290.00
         currency: 'usd',
@@ -76,14 +76,14 @@ async function createStripeProducts() {
       }),
 
       // Enterprise prices
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: enterpriseProduct.id,
         unit_amount: 9900, // $99.00
         currency: 'usd',
         recurring: { interval: 'month' },
         nickname: 'Enterprise Monthly',
       }),
-      stripe.prices.create({
+      stripeClient.prices.create({
         product: enterpriseProduct.id,
         unit_amount: 99000, // $990.00
         currency: 'usd',

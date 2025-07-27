@@ -21,7 +21,8 @@
       "Bash(git push:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(echo \"Checking for kubeconfig files...\" find /Volumes/dev/gmac-io-ci -name \"*kube*\" -type f)"
+      "Bash(echo \"Checking for kubeconfig files...\" find /Volumes/dev/gmac-io-ci -name \"*kube*\" -type f)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

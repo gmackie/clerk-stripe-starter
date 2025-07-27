@@ -1,0 +1,40 @@
+node_modules
+npm-debug.log
+.next
+.git
+.gitignore
+README.md
+.env
+.env.*
+.DS_Store
+coverage
+.coverage
+*.log
+.vscode
+.idea
+
+# Setup scripts that shouldn't be in production
+setup-stripe-products.ts
+STRIPE_PRICE_IDS.txt
+ADD_TO_ENV_LOCAL.txt
+ENV_SETUP_GUIDE.md
+
+# Development scripts
+add-missing-secrets.py
+add-remaining-secrets.py
+debug-deployment.sh
+deploy-to-gitea.py
+fix-secret-names.py
+quick-deploy.sh
+setup-gitea-secrets.sh
+watch-deployment.sh
+check-deployment.sh
+
+# CI/CD
+.gitea
+.github
+
+# Testing
+automated-user-test.ts
+test-user-flow.md
+USER_FLOW_CHECKLIST.md
