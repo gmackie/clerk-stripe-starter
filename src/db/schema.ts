@@ -32,6 +32,8 @@ export const subscriptions = sqliteTable('subscriptions', {
   stripePriceId: text('stripe_price_id').notNull(),
   stripeCurrentPeriodEnd: integer('stripe_current_period_end', { mode: 'timestamp' }).notNull(),
   status: text('status').notNull(),
+  trialEnd: integer('trial_end', { mode: 'timestamp' }),
+  cancelAtPeriodEnd: integer('cancel_at_period_end', { mode: 'boolean' }).default(false),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),

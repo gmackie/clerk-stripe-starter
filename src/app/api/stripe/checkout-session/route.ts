@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { PRICING_TIERS } from '@/lib/pricing';
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +40,12 @@ export async function POST(req: NextRequest) {
       user = await db.select().from(users).where(eq(users.clerkId, userId)).limit(1);
     }
 
-    const session = await stripe.checkout.sessions.create({
+    // Find the pricing tier for this price ID to get trial days
+    const tier = PRICING_TIERS.find(
+      t => t.stripePriceIds.monthly === priceId || t.stripePriceIds.annually === priceId
+    );
+
+    const sessionConfig: any = {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [
@@ -55,7 +61,16 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: user[0].id,
       },
-    });
+    };
+
+    // Add trial period if applicable
+    if (tier && tier.trialDays > 0) {
+      sessionConfig.subscription_data = {
+        trial_period_days: tier.trialDays,
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

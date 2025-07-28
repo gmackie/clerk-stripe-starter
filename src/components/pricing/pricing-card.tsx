@@ -14,6 +14,7 @@ interface PricingCardProps {
     price: { monthly: number; annually: number };
     stripePriceIds: { monthly: string; annually: string };
     popular?: boolean;
+    trialDays?: number;
   };
   billingPeriod: 'monthly' | 'annually';
   currentPlan?: string;
@@ -113,6 +114,15 @@ export function PricingCard({
           tier.popular ? "text-gray-300" : "text-green-600"
         )}>
           Save ${(tier.price.monthly * 12 - tier.price.annually)} per year
+        </p>
+      )}
+
+      {tier.trialDays && tier.trialDays > 0 && !isCurrentPlan && !isFreeTier && (
+        <p className={cn(
+          "text-sm mt-2 font-medium",
+          tier.popular ? "text-blue-300" : "text-blue-600"
+        )}>
+          ✨ {tier.trialDays}-day free trial included
         </p>
       )}
 

@@ -17,6 +17,7 @@ export const PRICING_TIERS = [
       monthly: '',
       annually: '',
     },
+    trialDays: 0,
   },
   {
     name: 'Starter',
@@ -27,6 +28,7 @@ export const PRICING_TIERS = [
       '1,000 API calls/month',
       'Email support',
       'Basic analytics',
+      '14-day free trial',
     ],
     price: {
       monthly: 9,
@@ -36,6 +38,7 @@ export const PRICING_TIERS = [
       monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_MONTHLY || '',
       annually: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY || '',
     },
+    trialDays: 14,
   },
   {
     name: 'Professional',
@@ -48,6 +51,7 @@ export const PRICING_TIERS = [
       'Advanced analytics',
       'Team collaboration',
       'Custom integrations',
+      '14-day free trial',
     ],
     price: {
       monthly: 29,
@@ -58,6 +62,7 @@ export const PRICING_TIERS = [
       annually: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY || '',
     },
     popular: true,
+    trialDays: 14,
   },
   {
     name: 'Enterprise',
@@ -70,6 +75,7 @@ export const PRICING_TIERS = [
       'Custom contracts',
       'SLA guarantees',
       'On-premise deployment',
+      '30-day free trial',
     ],
     price: {
       monthly: 99,
@@ -79,5 +85,6 @@ export const PRICING_TIERS = [
       monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_MONTHLY || '',
       annually: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY || '',
     },
+    trialDays: 30,
   },
 ];
