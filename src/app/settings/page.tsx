@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ApiKeysManager } from '@/components/settings/api-keys';
 import { ProfileForm } from '@/components/settings/profile-form';
+import { UsageDashboard } from '@/components/settings/usage-dashboard';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -28,6 +29,7 @@ export default function SettingsPage() {
                 <TabsTrigger value="billing">Billing</TabsTrigger>
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
                 <TabsTrigger value="api">API Keys</TabsTrigger>
+                <TabsTrigger value="usage">Usage</TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile">
@@ -113,6 +115,10 @@ export default function SettingsPage() {
 
               <TabsContent value="api">
                 <ApiKeysManager />
+              </TabsContent>
+
+              <TabsContent value="usage">
+                <UsageDashboard />
               </TabsContent>
             </Tabs>
           </div>
