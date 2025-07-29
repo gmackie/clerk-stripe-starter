@@ -17,6 +17,7 @@
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
+    "@sentry/nextjs": "^9.42.1",
     "@stripe/stripe-js": "^7.5.0",
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.35.1",

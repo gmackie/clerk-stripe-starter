@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { ToastProvider } from '@/components/providers/toast-provider';
+import { SentryUserContext } from '@/components/sentry-user-context';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,8 +31,10 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ToastProvider />
-          {children}
+          <SentryUserContext>
+            <ToastProvider />
+            {children}
+          </SentryUserContext>
         </body>
       </html>
     </ClerkProvider>

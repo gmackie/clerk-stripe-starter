@@ -5,6 +5,7 @@ import { checkRateLimit } from './rate-limit';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import * as Sentry from '@sentry/nextjs';
 
 interface ApiMiddlewareOptions {
   requireAuth?: boolean;
@@ -124,6 +125,23 @@ export function withApiMiddleware(
 
     } catch (error) {
       console.error('API middleware error:', error);
+      
+      // Capture error in Sentry with context
+      Sentry.captureException(error, {
+        tags: {
+          api: true,
+          authenticated: !!userId,
+          tier: subscriptionTier,
+        },
+        extra: {
+          endpoint: req.url,
+          method: req.method,
+          userId,
+          headers: Object.fromEntries(req.headers.entries()),
+        },
+        user: userId ? { id: userId } : undefined,
+      });
+      
       response = NextResponse.json(
         { 
           error: 'Internal server error',
