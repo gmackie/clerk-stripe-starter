@@ -18,6 +18,13 @@ export const PRICING_TIERS = [
       annually: '',
     },
     trialDays: 0,
+    limits: {
+      apiCalls: 100,
+      projects: 1,
+    },
+    overage: {
+      apiCalls: 0.02, // $0.02 per additional API call
+    },
   },
   {
     name: 'Starter',
@@ -29,6 +36,7 @@ export const PRICING_TIERS = [
       'Email support',
       'Basic analytics',
       '14-day free trial',
+      '$0.01 per additional API call',
     ],
     price: {
       monthly: 9,
@@ -39,6 +47,13 @@ export const PRICING_TIERS = [
       annually: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER_YEARLY || '',
     },
     trialDays: 14,
+    limits: {
+      apiCalls: 1000,
+      projects: 5,
+    },
+    overage: {
+      apiCalls: 0.01, // $0.01 per additional API call
+    },
   },
   {
     name: 'Professional',
@@ -52,6 +67,7 @@ export const PRICING_TIERS = [
       'Team collaboration',
       'Custom integrations',
       '14-day free trial',
+      '$0.005 per additional API call',
     ],
     price: {
       monthly: 29,
@@ -63,6 +79,13 @@ export const PRICING_TIERS = [
     },
     popular: true,
     trialDays: 14,
+    limits: {
+      apiCalls: 50000,
+      projects: -1, // unlimited
+    },
+    overage: {
+      apiCalls: 0.005, // $0.005 per additional API call
+    },
   },
   {
     name: 'Enterprise',
@@ -86,5 +109,27 @@ export const PRICING_TIERS = [
       annually: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE_YEARLY || '',
     },
     trialDays: 30,
+    limits: {
+      apiCalls: -1, // unlimited
+      projects: -1, // unlimited
+    },
+    overage: {
+      apiCalls: 0, // no overage charges
+    },
   },
 ];
+
+// Helper function to get tier limits
+export function getTierLimits(tierId: string) {
+  const tier = PRICING_TIERS.find(t => t.id === tierId);
+  return tier?.limits || { apiCalls: 100, projects: 1 };
+}
+
+// Helper function to calculate overage charges
+export function calculateOverageCharges(tierId: string, usage: number) {
+  const tier = PRICING_TIERS.find(t => t.id === tierId);
+  if (!tier || tier.limits.apiCalls === -1) return 0;
+  
+  const overage = Math.max(0, usage - tier.limits.apiCalls);
+  return overage * tier.overage.apiCalls;
+}

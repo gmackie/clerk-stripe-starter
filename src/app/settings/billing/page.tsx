@@ -15,7 +15,9 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  ExternalLink
+  ExternalLink,
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -44,6 +46,7 @@ export default function BillingPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [billingUsage, setBillingUsage] = useState<any>(null);
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -68,6 +71,13 @@ export default function BillingPage() {
       if (invoicesResponse.ok) {
         const invoicesData = await invoicesResponse.json();
         setInvoices(invoicesData.invoices);
+      }
+
+      // Fetch billing usage
+      const usageResponse = await fetch('/api/user/billing-usage');
+      if (usageResponse.ok) {
+        const usageData = await usageResponse.json();
+        setBillingUsage(usageData.billing);
       }
     } catch (error) {
       console.error('Error fetching billing data:', error);
@@ -207,6 +217,91 @@ export default function BillingPage() {
             </div>
           </div>
         </Card>
+
+        {/* Usage-Based Billing Card */}
+        {billingUsage && (
+          <Card className="mb-8 p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Current Month Usage</h2>
+                <TrendingUp className="h-5 w-5 text-gray-400" />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">API Calls</p>
+                  <p className="text-2xl font-semibold">
+                    {billingUsage.usage.total.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    of {billingUsage.tier.limits.apiCalls === -1 ? 'unlimited' : billingUsage.tier.limits.apiCalls.toLocaleString()}
+                  </p>
+                </div>
+                
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">Overage Charges</p>
+                  <p className="text-2xl font-semibold">
+                    ${billingUsage.usage.charges.toFixed(2)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {billingUsage.usage.overage > 0 ? `${billingUsage.usage.overage.toLocaleString()} calls over` : 'No overages'}
+                  </p>
+                </div>
+                
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">Projected Total</p>
+                  <p className="text-2xl font-semibold">
+                    {billingUsage.usage.projectedTotal.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    by end of month
+                  </p>
+                </div>
+              </div>
+              
+              {billingUsage.usage.percentage > 80 && billingUsage.tier.limits.apiCalls !== -1 && (
+                <div className={`border rounded-lg p-3 ${
+                  billingUsage.usage.percentage >= 100 ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className={`h-5 w-5 mt-0.5 ${
+                      billingUsage.usage.percentage >= 100 ? 'text-red-600' : 'text-yellow-600'
+                    }`} />
+                    <div className="text-sm">
+                      <p className={`font-medium ${
+                        billingUsage.usage.percentage >= 100 ? 'text-red-900' : 'text-yellow-900'
+                      }`}>
+                        {billingUsage.usage.percentage >= 100 ? 'Usage Limit Exceeded' : 'Approaching Usage Limit'}
+                      </p>
+                      <p className={billingUsage.usage.percentage >= 100 ? 'text-red-700' : 'text-yellow-700'}>
+                        You've used {billingUsage.usage.percentage.toFixed(0)}% of your monthly allowance. 
+                        {billingUsage.usage.overage > 0 && ` Additional charges of $${billingUsage.usage.charges.toFixed(2)} will apply.`}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 p-0 h-auto font-medium"
+                        onClick={() => router.push('/pricing')}
+                      >
+                        Upgrade to increase limits →
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="pt-2 border-t">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push('/settings?tab=usage')}
+                >
+                  View detailed usage →
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Invoices Section */}
         <div>

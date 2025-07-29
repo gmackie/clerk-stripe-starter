@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BarChart3, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { BarChart3, TrendingUp, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { getTierLimits, calculateOverageCharges } from '@/lib/pricing';
 
 interface UsageData {
   usage: any[];
@@ -29,9 +30,13 @@ export function UsageDashboard() {
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('7d');
+  const [subscription, setSubscription] = useState<any>(null);
+  const [monthlyUsage, setMonthlyUsage] = useState<number>(0);
 
   useEffect(() => {
     fetchUsageData();
+    fetchSubscription();
+    fetchMonthlyUsage();
   }, [period]);
 
   const fetchUsageData = async () => {
@@ -46,6 +51,30 @@ export function UsageDashboard() {
       console.error('Error fetching usage data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSubscription = async () => {
+    try {
+      const response = await fetch('/api/user/subscription');
+      if (response.ok) {
+        const data = await response.json();
+        setSubscription(data);
+      }
+    } catch (error) {
+      console.error('Error fetching subscription:', error);
+    }
+  };
+
+  const fetchMonthlyUsage = async () => {
+    try {
+      const response = await fetch('/api/user/usage?period=30d');
+      if (response.ok) {
+        const data = await response.json();
+        setMonthlyUsage(data.stats.totalRequests);
+      }
+    } catch (error) {
+      console.error('Error fetching monthly usage:', error);
     }
   };
 
@@ -105,6 +134,81 @@ export function UsageDashboard() {
           Last 90 Days
         </Button>
       </div>
+
+      {/* Usage Limit Card */}
+      {subscription && (
+        <Card className="p-6 mb-6">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-md font-semibold">Monthly API Usage</h3>
+              <p className="text-sm text-gray-600">Current billing period</p>
+            </div>
+            
+            {(() => {
+              const tier = subscription.tier || 'free';
+              const limits = getTierLimits(tier);
+              const usage = monthlyUsage;
+              const percentage = limits.apiCalls === -1 ? 0 : (usage / limits.apiCalls) * 100;
+              const overage = limits.apiCalls === -1 ? 0 : Math.max(0, usage - limits.apiCalls);
+              const overageCharges = calculateOverageCharges(tier, usage);
+              
+              return (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>
+                        {usage.toLocaleString()} / {limits.apiCalls === -1 ? 'Unlimited' : limits.apiCalls.toLocaleString()} calls
+                      </span>
+                      <span className={percentage > 90 ? 'text-red-600 font-medium' : ''}>
+                        {limits.apiCalls === -1 ? '∞' : `${percentage.toFixed(0)}%`}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all ${
+                          percentage > 100 ? 'bg-red-500' : percentage > 90 ? 'bg-yellow-500' : 'bg-green-500'
+                        }`}
+                        style={{ width: `${Math.min(100, percentage)}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {overage > 0 && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-red-900">Usage Limit Exceeded</p>
+                          <p className="text-red-700">
+                            {overage.toLocaleString()} calls over limit • ${overageCharges.toFixed(2)} in overage charges
+                          </p>
+                          <p className="text-red-600 mt-1">
+                            <a href="/pricing" className="underline">Upgrade your plan</a> to avoid overage charges
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {percentage > 80 && percentage <= 100 && overage === 0 && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-yellow-900">Approaching Usage Limit</p>
+                          <p className="text-yellow-700">
+                            You've used {percentage.toFixed(0)}% of your monthly allowance
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
