@@ -4,6 +4,7 @@ import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
+import { emailService } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   // Get the headers
@@ -58,6 +59,12 @@ export async function POST(req: NextRequest) {
             clerkId: id,
             email: primaryEmail,
             name: `${first_name || ''} ${last_name || ''}`.trim() || null,
+          });
+
+          // Send welcome email
+          await emailService.sendWelcomeEmail({
+            to: primaryEmail,
+            userFirstname: first_name || 'there',
           });
         }
         break;

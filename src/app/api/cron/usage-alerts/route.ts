@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { users, usageTracking } from '@/db/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 import { getTierLimits, PRICING_TIERS } from '@/lib/pricing';
+import { emailService } from '@/lib/email';
 
 // This endpoint checks usage and sends alerts when users approach their limits
 export async function POST(req: NextRequest) {
@@ -67,9 +68,15 @@ export async function POST(req: NextRequest) {
           message: `You've used ${usagePercentage.toFixed(0)}% of your monthly API limit`,
         });
 
-        // Here you would typically send an email notification
-        // For now, we'll just log it
-        console.log(`Usage warning for ${user.email}: ${usagePercentage.toFixed(0)}% used`);
+        // Send email notification
+        await emailService.sendUsageAlert({
+          to: user.email,
+          userFirstname: user.name?.split(' ')[0] || 'there',
+          usagePercentage: Math.round(usagePercentage),
+          currentUsage: totalCalls,
+          limit: limits.apiCalls,
+          planName: tier?.name || 'Free',
+        });
       } else if (usagePercentage >= 100) {
         alerts.push({
           userId: user.id,
@@ -82,8 +89,15 @@ export async function POST(req: NextRequest) {
           message: `You've exceeded your monthly API limit. Overage charges will apply.`,
         });
 
-        // Here you would send a more urgent notification
-        console.log(`Usage exceeded for ${user.email}: ${totalCalls} calls (limit: ${limits.apiCalls})`);
+        // Send urgent notification
+        await emailService.sendUsageAlert({
+          to: user.email,
+          userFirstname: user.name?.split(' ')[0] || 'there',
+          usagePercentage: Math.round(usagePercentage),
+          currentUsage: totalCalls,
+          limit: limits.apiCalls,
+          planName: tier?.name || 'Free',
+        });
       }
     }
 

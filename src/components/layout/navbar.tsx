@@ -30,6 +30,11 @@ export function Navbar() {
                   <Link href="/settings" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                     Settings
                   </Link>
+                  {process.env.NODE_ENV === 'development' && (
+                    <Link href="/email-preview" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                      Emails
+                    </Link>
+                  )}
                 </>
               )}
             </div>

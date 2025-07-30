@@ -4,6 +4,8 @@ import { db } from '@/db';
 import { users, subscriptions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
+import { emailService } from '@/lib/email';
+import { PRICING_TIERS } from '@/lib/pricing';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -57,6 +59,40 @@ export async function POST(req: NextRequest) {
             trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
           });
+
+          // Send subscription confirmation email
+          const user = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, session.client_reference_id))
+            .limit(1);
+
+          if (user.length > 0) {
+            const tier = PRICING_TIERS.find(t => 
+              t.stripePriceIds.monthly === subscription.items.data[0].price.id ||
+              t.stripePriceIds.annually === subscription.items.data[0].price.id
+            );
+
+            const price = subscription.items.data[0].price;
+            const interval = price.recurring?.interval || 'month';
+            const amount = new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: price.currency.toUpperCase(),
+            }).format((price.unit_amount || 0) / 100);
+
+            await emailService.sendSubscriptionConfirmation({
+              to: user[0].email,
+              userFirstname: user[0].name?.split(' ')[0] || 'there',
+              planName: tier?.name || 'Professional',
+              amount,
+              interval,
+              nextBillingDate: new Date((subscription as any).current_period_end * 1000).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }),
+            });
+          }
         }
         break;
       }

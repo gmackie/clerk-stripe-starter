@@ -17,6 +17,7 @@
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
+    "@react-email/components": "^0.3.3",
     "@sentry/nextjs": "^9.42.1",
     "@stripe/stripe-js": "^7.5.0",
     "@upstash/ratelimit": "^2.0.5",
@@ -29,7 +30,9 @@
     "next": "15.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-email": "^4.2.5",
     "react-hot-toast": "^2.5.2",
+    "resend": "^4.7.0",
     "stripe": "^18.3.0",
     "svix": "^1.69.0",
     "tailwind-merge": "^3.3.1"
