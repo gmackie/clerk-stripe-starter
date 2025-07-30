@@ -68,43 +68,6 @@ export const usageTracking = sqliteTable('usage_tracking', {
   statusCode: integer('status_code'),
 });
 
-export const projects = sqliteTable('projects', {
-  id: text('id').primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id),
-  name: text('name').notNull(),
-  slug: text('slug').notNull().unique(),
-  description: text('description'),
-  environment: text('environment').notNull().default('development'), // development, staging, production
-  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: integer('updated_at', { mode: 'timestamp' })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
-
-export const sentryIntegrations = sqliteTable('sentry_integrations', {
-  id: text('id').primaryKey(),
-  projectId: text('project_id')
-    .notNull()
-    .references(() => projects.id),
-  dsn: text('dsn').notNull(),
-  org: text('org').notNull(),
-  project: text('project').notNull(),
-  authToken: text('auth_token'), // encrypted
-  environment: text('environment').notNull(),
-  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: integer('updated_at', { mode: 'timestamp' })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
-
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Subscription = typeof subscriptions.$inferSelect;
@@ -113,7 +76,3 @@ export type ApiKey = typeof apiKeys.$inferSelect;
 export type NewApiKey = typeof apiKeys.$inferInsert;
 export type UsageTracking = typeof usageTracking.$inferSelect;
 export type NewUsageTracking = typeof usageTracking.$inferInsert;
-export type Project = typeof projects.$inferSelect;
-export type NewProject = typeof projects.$inferInsert;
-export type SentryIntegration = typeof sentryIntegrations.$inferSelect;
-export type NewSentryIntegration = typeof sentryIntegrations.$inferInsert;

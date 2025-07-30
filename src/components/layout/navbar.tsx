@@ -27,9 +27,6 @@ export function Navbar() {
                   <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                     Dashboard
                   </Link>
-                  <Link href="/projects" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
-                    Projects
-                  </Link>
                   <Link href="/settings" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                     Settings
                   </Link>

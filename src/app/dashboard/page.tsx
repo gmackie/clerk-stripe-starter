@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Code, Key, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface UserData {
@@ -15,23 +13,15 @@ interface UserData {
   };
 }
 
-interface DashboardStats {
-  projects: number;
-  apiKeys: number;
-  monthlyUsage: number;
-}
-
 export default function DashboardPage() {
   const { user } = useUser();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [stats, setStats] = useState<DashboardStats>({ projects: 0, apiKeys: 0, monthlyUsage: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       fetchUserData();
-      fetchStats();
     }
   }, [user]);
 
@@ -44,33 +34,6 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      // Fetch projects count
-      const projectsRes = await fetch('/api/projects');
-      if (projectsRes.ok) {
-        const { projects } = await projectsRes.json();
-        setStats(prev => ({ ...prev, projects: projects.length }));
-      }
-
-      // Fetch API keys count
-      const keysRes = await fetch('/api/keys');
-      if (keysRes.ok) {
-        const { keys } = await keysRes.json();
-        setStats(prev => ({ ...prev, apiKeys: keys.length }));
-      }
-
-      // Fetch monthly usage
-      const usageRes = await fetch('/api/user/usage?period=30d');
-      if (usageRes.ok) {
-        const { stats } = await usageRes.json();
-        setStats(prev => ({ ...prev, monthlyUsage: stats.totalRequests }));
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
     }
   };
 
@@ -113,63 +76,6 @@ export default function DashboardPage() {
             <p className="mt-2 text-gray-600">
               Welcome back, {user?.firstName || 'there'}!
             </p>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-3 mb-6">
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Projects</p>
-                  <p className="text-2xl font-semibold">{stats.projects}</p>
-                </div>
-                <Code className="h-8 w-8 text-blue-500" />
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-4 w-full"
-                onClick={() => window.location.href = '/projects'}
-              >
-                Manage Projects →
-              </Button>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">API Keys</p>
-                  <p className="text-2xl font-semibold">{stats.apiKeys}</p>
-                </div>
-                <Key className="h-8 w-8 text-green-500" />
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-4 w-full"
-                onClick={() => window.location.href = '/settings?tab=api'}
-              >
-                Manage Keys →
-              </Button>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Monthly API Calls</p>
-                  <p className="text-2xl font-semibold">{stats.monthlyUsage.toLocaleString()}</p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-purple-500" />
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-4 w-full"
-                onClick={() => window.location.href = '/settings?tab=usage'}
-              >
-                View Usage →
-              </Button>
-            </Card>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
