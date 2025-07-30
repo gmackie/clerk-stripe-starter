@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ApiKeysManager } from '@/components/settings/api-keys';
 import { ProfileForm } from '@/components/settings/profile-form';
 import { UsageDashboard } from '@/components/settings/usage-dashboard';
+import { FileManagement } from '@/components/settings/file-management';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -30,6 +31,7 @@ export default function SettingsPage() {
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
                 <TabsTrigger value="api">API Keys</TabsTrigger>
                 <TabsTrigger value="usage">Usage</TabsTrigger>
+                <TabsTrigger value="files">Files</TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile">
@@ -119,6 +121,10 @@ export default function SettingsPage() {
 
               <TabsContent value="usage">
                 <UsageDashboard />
+              </TabsContent>
+
+              <TabsContent value="files">
+                <FileManagement />
               </TabsContent>
             </Tabs>
           </div>

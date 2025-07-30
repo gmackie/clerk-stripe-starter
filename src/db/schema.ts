@@ -68,6 +68,28 @@ export const usageTracking = sqliteTable('usage_tracking', {
   statusCode: integer('status_code'),
 });
 
+export const fileUploads = sqliteTable('file_uploads', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  filename: text('filename').notNull(),
+  originalName: text('original_name').notNull(),
+  mimeType: text('mime_type').notNull(),
+  size: integer('size').notNull(),
+  cloudinaryPublicId: text('cloudinary_public_id').notNull(),
+  cloudinaryUrl: text('cloudinary_url').notNull(),
+  cloudinarySecureUrl: text('cloudinary_secure_url').notNull(),
+  resourceType: text('resource_type').notNull(),
+  format: text('format'),
+  width: integer('width'),
+  height: integer('height'),
+  folder: text('folder'),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Subscription = typeof subscriptions.$inferSelect;
@@ -76,3 +98,5 @@ export type ApiKey = typeof apiKeys.$inferSelect;
 export type NewApiKey = typeof apiKeys.$inferInsert;
 export type UsageTracking = typeof usageTracking.$inferSelect;
 export type NewUsageTracking = typeof usageTracking.$inferInsert;
+export type FileUpload = typeof fileUploads.$inferSelect;
+export type NewFileUpload = typeof fileUploads.$inferInsert;

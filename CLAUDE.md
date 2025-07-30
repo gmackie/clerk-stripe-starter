@@ -35,6 +35,9 @@ This is a SaaS starter kit with:
 - `/api/user/invoices` - Get billing history
 - `/api/keys` - Manage API keys (GET, POST, DELETE)
 - `/api/example` - Example API endpoint with rate limiting
+- `/api/test-email` - Send test emails (dev only)
+- `/api/uploads` - Upload and list files (GET, POST)
+- `/api/uploads/[id]` - Delete specific file (DELETE)
 
 ## Environment Variables Required
 - Clerk: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY
@@ -43,6 +46,9 @@ This is a SaaS starter kit with:
 - App: NEXT_PUBLIC_APP_URL
 - Stripe Price IDs for each tier (see .env.local.example)
 - Upstash Redis (optional): UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
+- Sentry (optional): NEXT_PUBLIC_SENTRY_DSN, SENTRY_ORG, SENTRY_PROJECT, SENTRY_AUTH_TOKEN
+- Resend (optional): RESEND_API_KEY
+- Cloudinary (optional): CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 ## Common Tasks
 1. Adding new subscription tiers: Update `src/lib/pricing.ts`
@@ -54,11 +60,13 @@ This is a SaaS starter kit with:
 Use Stripe test card: 4242 4242 4242 4242 with any future expiry date and CVC.
 
 ## New Features
-- **Settings Page** (`/settings`) - User profile, billing, notifications, API keys
+- **Settings Page** (`/settings`) - User profile, billing, notifications, API keys, file uploads
 - **API Key Management** - Generate and manage API keys for external access
 - **Rate Limiting** - Different limits based on subscription tier (requires Upstash Redis)
 - **Usage Tracking** - Track API usage in the database
 - **Billing History** - View invoices and manage subscription
+- **Email Integration** - Automated emails with Resend (welcome, subscription, usage alerts)
+- **File Uploads** - Drag-and-drop file uploads with Cloudinary storage
 
 ## API Authentication
 API routes support two authentication methods:
