@@ -8,6 +8,7 @@ import { eq } from 'drizzle-orm';
 import * as Sentry from '@sentry/nextjs';
 import { isFeatureEnabled } from './posthog';
 import { FEATURE_FLAGS } from './feature-flags';
+import { trackApiUsage } from './analytics-server';
 
 interface ApiMiddlewareOptions {
   requireAuth?: boolean;
@@ -173,7 +174,7 @@ export function withApiMiddleware(
         if (authHeader && userId && statusCode) {
           const responseTime = Date.now() - startTime;
           const endpoint = new URL(req.url).pathname;
-          await trackApiUsage(userId, endpoint, responseTime, statusCode);
+          await trackApiUsage(userId, endpoint, req.method, statusCode, responseTime);
         }
       } catch (trackError) {
         console.error('Error tracking API usage:', trackError);

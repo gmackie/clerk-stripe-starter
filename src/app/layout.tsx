@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { ToastProvider } from '@/components/providers/toast-provider';
 import { SentryUserContext } from '@/components/sentry-user-context';
 import { PHProvider, PostHogAuthWrapper } from '@/providers/posthog-provider';
+import { AnalyticsProvider } from '@/providers/analytics-provider';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,10 +35,12 @@ export default function RootLayout({
         >
           <PHProvider>
             <PostHogAuthWrapper>
-              <SentryUserContext>
-                <ToastProvider />
-                {children}
-              </SentryUserContext>
+              <AnalyticsProvider>
+                <SentryUserContext>
+                  <ToastProvider />
+                  {children}
+                </SentryUserContext>
+              </AnalyticsProvider>
             </PostHogAuthWrapper>
           </PHProvider>
         </body>

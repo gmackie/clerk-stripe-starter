@@ -7,6 +7,7 @@ import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
 import { PricingCard } from '@/components/pricing/pricing-card';
 import { PRICING_TIERS } from '@/lib/pricing';
+import { useAnalytics } from '@/hooks/use-analytics';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 
@@ -21,11 +22,15 @@ interface UserSubscription {
 export default function PricingPage() {
   const { isSignedIn, user } = useUser();
   const router = useRouter();
+  const { trackEvent, trackPageView, trackButtonClick } = useAnalytics();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
 
   useEffect(() => {
+    // Track page view
+    trackPageView('/pricing', 'Pricing');
+    
     if (isSignedIn) {
       fetchUserSubscription();
     }
@@ -68,6 +73,14 @@ export default function PricingPage() {
     }
 
     setIsLoading(tierId);
+    
+    // Track plan selection
+    trackEvent('button_clicked', {
+      elementId: `select-plan-${tierId}`,
+      elementText: `Select ${tierId} plan`,
+      plan: tierId,
+      billingPeriod,
+    });
     
     try {
       const tier = PRICING_TIERS.find(t => t.id === tierId);

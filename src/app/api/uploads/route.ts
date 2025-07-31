@@ -6,6 +6,7 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 import { parseFormData } from '@/lib/upload-middleware';
 import { nanoid } from '@/lib/utils';
 import { inngest } from '@/lib/inngest';
+import { trackServerEvent } from '@/lib/analytics-server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +60,15 @@ export async function POST(request: NextRequest) {
         size: newFile.size,
         mimeType: newFile.mimeType,
       },
+    });
+
+    // Track file upload event
+    await trackServerEvent('file_uploaded', {
+      userId,
+      fileId: newFile.id,
+      fileType: newFile.mimeType,
+      fileSize: newFile.size,
+      resourceType: newFile.resourceType,
     });
 
     return NextResponse.json({

@@ -74,6 +74,7 @@ Use Stripe test card: 4242 4242 4242 4242 with any future expiry date and CVC.
 - **File Uploads** - Drag-and-drop file uploads with Cloudinary storage
 - **Background Jobs** - Reliable job processing with Inngest (email notifications, file processing, scheduled tasks)
 - **Feature Flags** - Control feature rollout with PostHog (A/B testing, gradual rollouts, user targeting)
+- **Analytics & Monitoring** - Track user behavior and performance with Vercel Analytics & Speed Insights
 
 ## API Authentication
 API routes support two authentication methods:
