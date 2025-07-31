@@ -38,6 +38,9 @@ export function Navbar() {
                       <Link href="/jobs" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                         Jobs
                       </Link>
+                      <Link href="/feature-flags" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                        Flags
+                      </Link>
                     </>
                   )}
                 </>

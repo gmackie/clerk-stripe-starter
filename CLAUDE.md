@@ -52,6 +52,8 @@ This is a SaaS starter kit with:
 - Sentry (optional): NEXT_PUBLIC_SENTRY_DSN, SENTRY_ORG, SENTRY_PROJECT, SENTRY_AUTH_TOKEN
 - Resend (optional): RESEND_API_KEY
 - Cloudinary (optional): CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+- Inngest (optional): INNGEST_SIGNING_KEY
+- PostHog (optional): NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST
 
 ## Common Tasks
 1. Adding new subscription tiers: Update `src/lib/pricing.ts`
@@ -71,6 +73,7 @@ Use Stripe test card: 4242 4242 4242 4242 with any future expiry date and CVC.
 - **Email Integration** - Automated emails with Resend (welcome, subscription, usage alerts)
 - **File Uploads** - Drag-and-drop file uploads with Cloudinary storage
 - **Background Jobs** - Reliable job processing with Inngest (email notifications, file processing, scheduled tasks)
+- **Feature Flags** - Control feature rollout with PostHog (A/B testing, gradual rollouts, user targeting)
 
 ## API Authentication
 API routes support two authentication methods:

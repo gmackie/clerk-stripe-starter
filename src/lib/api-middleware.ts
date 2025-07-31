@@ -6,6 +6,8 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import * as Sentry from '@sentry/nextjs';
+import { isFeatureEnabled } from './posthog';
+import { FEATURE_FLAGS } from './feature-flags';
 
 interface ApiMiddlewareOptions {
   requireAuth?: boolean;
@@ -84,7 +86,19 @@ export function withApiMiddleware(
 
       // Step 3: Handle rate limiting if enabled
       if (options.rateLimit && userId) {
-        const rateLimitResult = await checkRateLimit(userId, subscriptionTier);
+        // Check if user has rate limit increase feature flag
+        const hasRateLimitIncrease = await isFeatureEnabled(
+          userId,
+          FEATURE_FLAGS.RATE_LIMIT_INCREASE,
+          false
+        );
+        
+        // Modify tier for rate limiting if feature flag is enabled
+        const effectiveTier = hasRateLimitIncrease && subscriptionTier !== 'enterprise' 
+          ? 'professional' // Bump up one tier for rate limiting
+          : subscriptionTier;
+        
+        const rateLimitResult = await checkRateLimit(userId, effectiveTier);
         
         if (!rateLimitResult.success) {
           response = NextResponse.json(

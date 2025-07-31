@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
+import { FeatureAnnouncement } from '@/components/feature-announcement';
 import toast from 'react-hot-toast';
 
 interface UserData {
@@ -69,6 +70,7 @@ export default function DashboardPage() {
 
   return (
     <PageWrapper showFooter={false}>
+      <FeatureAnnouncement />
       <div className="bg-gray-50 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8">

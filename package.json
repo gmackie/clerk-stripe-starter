@@ -32,6 +32,8 @@
     "lucide-react": "^0.525.0",
     "multer": "^2.0.2",
     "next": "15.4.2",
+    "posthog-js": "^1.258.3",
+    "posthog-node": "^5.6.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-email": "^4.2.5",
