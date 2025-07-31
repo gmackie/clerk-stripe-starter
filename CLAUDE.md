@@ -18,6 +18,7 @@ This is a SaaS starter kit with:
 - `npm run db:push` - Push database schema to Turso
 - `npm run db:studio` - Open Drizzle Studio
 - `npm run db:generate` - Generate database migrations
+- `inngest dev` - Start Inngest dev server for background jobs (separate terminal)
 
 ## Important Files
 - `.env.local` - Environment variables (copy from .env.local.example)
@@ -38,6 +39,8 @@ This is a SaaS starter kit with:
 - `/api/test-email` - Send test emails (dev only)
 - `/api/uploads` - Upload and list files (GET, POST)
 - `/api/uploads/[id]` - Delete specific file (DELETE)
+- `/api/inngest` - Inngest webhook handler for background jobs
+- `/api/test-job` - Trigger test background jobs (dev only)
 
 ## Environment Variables Required
 - Clerk: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY
@@ -67,6 +70,7 @@ Use Stripe test card: 4242 4242 4242 4242 with any future expiry date and CVC.
 - **Billing History** - View invoices and manage subscription
 - **Email Integration** - Automated emails with Resend (welcome, subscription, usage alerts)
 - **File Uploads** - Drag-and-drop file uploads with Cloudinary storage
+- **Background Jobs** - Reliable job processing with Inngest (email notifications, file processing, scheduled tasks)
 
 ## API Authentication
 API routes support two authentication methods:

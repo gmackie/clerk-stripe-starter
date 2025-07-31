@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 import { emailService } from '@/lib/email';
 import { PRICING_TIERS } from '@/lib/pricing';
+import { inngest } from '@/lib/inngest';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -91,6 +92,17 @@ export async function POST(req: NextRequest) {
                 month: 'long',
                 day: 'numeric',
               }),
+            });
+
+            // Trigger Inngest event for subscription created
+            await inngest.send({
+              name: 'user.subscription.created',
+              data: {
+                userId: user[0].id,
+                subscriptionId: subscription.id,
+                priceId: subscription.items.data[0].price.id,
+                planName: tier?.name || 'Professional',
+              },
             });
           }
         }

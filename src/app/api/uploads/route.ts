@@ -5,6 +5,7 @@ import { fileUploads } from '@/db/schema';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { parseFormData } from '@/lib/upload-middleware';
 import { nanoid } from '@/lib/utils';
+import { inngest } from '@/lib/inngest';
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,6 +48,18 @@ export async function POST(request: NextRequest) {
         folder: `saas-starter/${userId}`,
       })
       .returning();
+
+    // Trigger background processing for the uploaded file
+    await inngest.send({
+      name: 'user.file.uploaded',
+      data: {
+        userId,
+        fileId: newFile.id,
+        filename: newFile.filename,
+        size: newFile.size,
+        mimeType: newFile.mimeType,
+      },
+    });
 
     return NextResponse.json({
       success: true,

@@ -31,9 +31,14 @@ export function Navbar() {
                     Settings
                   </Link>
                   {process.env.NODE_ENV === 'development' && (
-                    <Link href="/email-preview" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
-                      Emails
-                    </Link>
+                    <>
+                      <Link href="/email-preview" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                        Emails
+                      </Link>
+                      <Link href="/jobs" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                        Jobs
+                      </Link>
+                    </>
                   )}
                 </>
               )}
