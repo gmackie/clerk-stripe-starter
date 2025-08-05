@@ -18,7 +18,8 @@
     "setup:stripe": "node scripts/init-stripe.js",
     "setup:demo": "node scripts/seed-demo-data.js",
     "setup:branding": "node scripts/customize-branding.js",
-    "setup:all": "npm run setup && npm run setup:stripe && npm run setup:demo"
+    "setup:all": "npm run setup && npm run setup:stripe && npm run setup:demo",
+    "deploy:config": "node scripts/deploy-buttons.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.4",

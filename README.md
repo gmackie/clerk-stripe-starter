@@ -33,6 +33,14 @@ A production-ready SaaS starter template with authentication, payments, and subs
 
 ## Quick Start
 
+### Option 1: One-Click Deploy
+
+[![Deploy to Vercel](https://img.shields.io/badge/Deploy%20to-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/new/clone?repository=https://github.com/yourusername/saas-starter)
+
+[![Deploy to Netlify](https://img.shields.io/badge/Deploy%20to-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/saas-starter)
+
+### Option 2: Local Development
+
 1. **Clone and install dependencies**
    ```bash
    git clone https://ci.gmac.io/mackieg/clerk-stripe-starter.git
@@ -40,23 +48,22 @@ A production-ready SaaS starter template with authentication, payments, and subs
    npm install
    ```
 
-2. **Set up environment variables**
+2. **Run the complete setup wizard**
    ```bash
-   cp .env.local.example .env.local
-   # Edit .env.local with your keys
+   npm run setup:all
    ```
+   This will:
+   - Configure environment variables
+   - Set up Stripe products and prices
+   - Seed demo data
+   - Initialize your database
 
-3. **Set up the database**
-   ```bash
-   npm run db:push
-   ```
-
-4. **Run the development server**
+3. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open [http://localhost:3000](http://localhost:3000)**
+4. **Open [http://localhost:3000](http://localhost:3000)**
 
 ## Environment Variables
 

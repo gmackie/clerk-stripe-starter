@@ -1,0 +1,29 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": {
+      "description": "Clerk publishable key for authentication"
+    },
+    "CLERK_SECRET_KEY": {
+      "description": "Clerk secret key for server-side authentication"
+    },
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": {
+      "description": "Stripe publishable key for payments"
+    },
+    "STRIPE_SECRET_KEY": {
+      "description": "Stripe secret key for server-side payments"
+    },
+    "TURSO_DATABASE_URL": {
+      "description": "Turso database URL"
+    },
+    "TURSO_AUTH_TOKEN": {
+      "description": "Turso authentication token"
+    },
+    "CRON_SECRET": {
+      "description": "Secret for cron job authentication"
+    }
+  }
+}

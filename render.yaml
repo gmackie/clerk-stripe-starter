@@ -1,0 +1,41 @@
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "saas-starter",
+      "env": "node",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm start",
+      "envVars": [
+        {
+          "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+          "description": "Clerk publishable key"
+        },
+        {
+          "key": "CLERK_SECRET_KEY",
+          "description": "Clerk secret key"
+        },
+        {
+          "key": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+          "description": "Stripe publishable key"
+        },
+        {
+          "key": "STRIPE_SECRET_KEY",
+          "description": "Stripe secret key"
+        },
+        {
+          "key": "TURSO_DATABASE_URL",
+          "description": "Turso database URL"
+        },
+        {
+          "key": "TURSO_AUTH_TOKEN",
+          "description": "Turso auth token"
+        },
+        {
+          "key": "CRON_SECRET",
+          "description": "Cron secret"
+        }
+      ]
+    }
+  ]
+}
