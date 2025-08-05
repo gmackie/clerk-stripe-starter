@@ -1,0 +1,13 @@
+{
+  "authentication": "Authentication",
+  "payments": "Payments & Billing",
+  "database": "Database",
+  "email": "Email Integration",
+  "file-uploads": "File Uploads",
+  "background-jobs": "Background Jobs",
+  "feature-flags": "Feature Flags",
+  "analytics": "Analytics & Monitoring",
+  "error-tracking": "Error Tracking",
+  "api-keys": "API Keys",
+  "rate-limiting": "Rate Limiting"
+}

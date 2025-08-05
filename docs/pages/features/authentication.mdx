@@ -1,0 +1,185 @@
+# Authentication with Clerk
+
+The starter kit uses [Clerk](https://clerk.com) for a complete authentication solution with minimal setup.
+
+## Features
+
+- **Multiple Auth Methods**: Email/password, OAuth providers, magic links
+- **User Management**: Built-in user profiles and management
+- **Security**: Two-factor authentication, session management
+- **Customization**: Fully customizable auth components
+- **Webhooks**: Real-time user events
+
+## Setup
+
+### 1. Create a Clerk Application
+
+1. Sign up at [clerk.com](https://clerk.com)
+2. Create a new application
+3. Choose your authentication methods
+
+### 2. Configure Environment Variables
+
+Add your Clerk keys to `.env.local`:
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SECRET=whsec_...
+```
+
+### 3. Configure URLs
+
+Set your application URLs:
+
+```env
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+## Usage
+
+### Protecting Routes
+
+Routes are protected using middleware in `src/middleware.ts`:
+
+```typescript
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/pricing',
+  '/api/webhooks(.*)',
+]);
+
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth().protect();
+  }
+});
+```
+
+### Getting User Data
+
+In components:
+
+```typescript
+import { useUser } from '@clerk/nextjs';
+
+function Profile() {
+  const { user } = useUser();
+  
+  return <div>Hello, {user?.firstName}!</div>;
+}
+```
+
+In API routes:
+
+```typescript
+import { auth } from '@clerk/nextjs/server';
+
+export async function GET() {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  
+  // User is authenticated
+}
+```
+
+## Customization
+
+### Custom Sign-In Page
+
+Create `app/sign-in/[[...sign-in]]/page.tsx`:
+
+```typescript
+import { SignIn } from '@clerk/nextjs';
+
+export default function SignInPage() {
+  return (
+    <SignIn 
+      appearance={{
+        elements: {
+          formButtonPrimary: 'bg-blue-600 hover:bg-blue-700',
+        },
+      }}
+    />
+  );
+}
+```
+
+### User Button
+
+Add the user menu to your navigation:
+
+```typescript
+import { UserButton } from '@clerk/nextjs';
+
+function Navbar() {
+  return (
+    <nav>
+      <UserButton afterSignOutUrl="/" />
+    </nav>
+  );
+}
+```
+
+## Webhooks
+
+Handle user events with webhooks:
+
+1. Set up webhook endpoint in Clerk dashboard
+2. Add webhook handler at `/api/webhooks/clerk`
+3. Process events:
+
+```typescript
+const event = webhook.verify(payload, headers);
+
+switch (event.type) {
+  case 'user.created':
+    // Create user in database
+    break;
+  case 'user.updated':
+    // Update user data
+    break;
+  case 'user.deleted':
+    // Clean up user data
+    break;
+}
+```
+
+## Best Practices
+
+1. **Sync Users**: Always sync Clerk users with your database
+2. **Handle Webhooks**: Process user events for data consistency
+3. **Custom Claims**: Add custom metadata to user sessions
+4. **Rate Limiting**: Implement rate limiting for auth endpoints
+5. **Security Headers**: Use proper CSP headers
+
+## Troubleshooting
+
+### User Not Found
+
+Ensure webhook sync is working:
+- Check webhook logs in Clerk dashboard
+- Verify webhook secret is correct
+- Check database for user record
+
+### Session Issues
+
+- Clear browser cookies
+- Check middleware configuration
+- Verify environment variables
+
+### OAuth Problems
+
+- Ensure redirect URLs are correct
+- Check OAuth provider configuration
+- Verify domain is added in Clerk

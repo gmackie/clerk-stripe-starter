@@ -23,7 +23,9 @@
       "Bash(git commit:*)",
       "Bash(echo \"Checking for kubeconfig files...\" find /Volumes/dev/gmac-io-ci -name \"*kube*\" -type f)",
       "Bash(sed:*)",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(npm init:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

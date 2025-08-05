@@ -1,0 +1,87 @@
+# SaaS Starter Kit Documentation
+
+Welcome to the comprehensive documentation for the Clerk + Stripe SaaS Starter Kit. This starter kit provides everything you need to launch a modern SaaS application with authentication, payments, and more.
+
+## What's Included
+
+This starter kit comes with the following features pre-configured and ready to use:
+
+- **🔐 Authentication** - Complete auth system with Clerk
+- **💳 Payments** - Subscription management with Stripe
+- **📊 Database** - Turso database with Drizzle ORM
+- **🎨 UI Components** - Beautiful components with Tailwind CSS v4
+- **📧 Email** - Transactional emails with Resend
+- **📁 File Uploads** - Cloud storage with Cloudinary
+- **⚡ Background Jobs** - Reliable job processing with Inngest
+- **🚩 Feature Flags** - Gradual rollouts with PostHog
+- **📈 Analytics** - User behavior tracking with Vercel Analytics
+- **🐛 Error Tracking** - Real-time error monitoring with Sentry
+
+## Quick Start
+
+Get your SaaS application up and running in minutes:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/clerk-stripe-starter
+cd clerk-stripe-starter
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your API keys
+
+# Set up database
+npm run db:push
+
+# Start development server
+npm run dev
+```
+
+## Architecture
+
+The starter kit is built with:
+
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Turso** - Edge database built on LibSQL
+- **Drizzle ORM** - Type-safe database queries
+
+## Key Features
+
+### Multi-tier Subscriptions
+- Free, Starter, Professional, and Enterprise tiers
+- Usage-based billing with overage charges
+- Annual billing discounts
+- Trial periods
+
+### Developer Experience
+- Type-safe database queries
+- Hot reload development
+- Comprehensive error handling
+- API middleware for common patterns
+
+### Production Ready
+- Dockerized deployment
+- CI/CD with GitHub Actions or Gitea
+- Environment-based configuration
+- Security best practices
+
+## Documentation Structure
+
+This documentation is organized into the following sections:
+
+- **Getting Started** - Installation, configuration, and deployment
+- **Features** - Detailed guides for each major feature
+- **API Reference** - Complete API documentation
+- **Guides** - How-to guides and tutorials
+- **Reference** - Configuration and architecture details
+
+## Support
+
+- [GitHub Issues](https://github.com/yourusername/clerk-stripe-starter/issues)
+- [Discord Community](https://discord.gg/yourdiscord)
+- [Email Support](mailto:support@yourcompany.com)

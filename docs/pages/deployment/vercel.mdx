@@ -1,0 +1,164 @@
+# Deploy to Vercel
+
+The easiest way to deploy your SaaS application is using Vercel, the platform built by the creators of Next.js.
+
+## One-Click Deploy
+
+Deploy with a single click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/clerk-stripe-starter)
+
+## Manual Deployment
+
+### 1. Push to GitHub
+
+First, push your code to a GitHub repository:
+
+```bash
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/yourusername/your-repo
+git push -u origin main
+```
+
+### 2. Import to Vercel
+
+1. Go to [vercel.com](https://vercel.com)
+2. Click "New Project"
+3. Import your GitHub repository
+4. Configure environment variables
+
+### 3. Environment Variables
+
+Add all required environment variables in Vercel:
+
+```env
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
+CLERK_SECRET_KEY=sk_live_...
+CLERK_WEBHOOK_SECRET=whsec_...
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Database
+TURSO_DATABASE_URL=libsql://...
+TURSO_AUTH_TOKEN=...
+
+# And all other variables from .env.local.example
+```
+
+### 4. Configure Domains
+
+1. Add your custom domain in Project Settings
+2. Configure DNS records
+3. Enable HTTPS (automatic)
+
+## Production Considerations
+
+### Database Migrations
+
+Run migrations after deployment:
+
+```bash
+npm run db:push
+```
+
+Or use GitHub Actions for automatic migrations.
+
+### Webhook Configuration
+
+Update webhook URLs in external services:
+
+1. **Clerk Webhooks**:
+   - URL: `https://your-domain.com/api/webhooks/clerk`
+   - Events: user.created, user.updated, user.deleted
+
+2. **Stripe Webhooks**:
+   - URL: `https://your-domain.com/api/webhooks/stripe`
+   - Events: All subscription and payment events
+
+### Edge Functions
+
+Configure Edge Runtime for better performance:
+
+```typescript
+export const runtime = 'edge'; // Add to API routes
+```
+
+### Analytics
+
+Vercel Analytics is automatically configured. View metrics in your dashboard.
+
+## Monitoring
+
+### Logs
+
+Access logs in the Vercel dashboard:
+- Function logs
+- Build logs
+- Edge logs
+
+### Performance
+
+Monitor Core Web Vitals:
+- Speed Insights dashboard
+- Real User Monitoring
+- Performance alerts
+
+### Error Tracking
+
+Sentry is pre-configured for error tracking:
+
+```env
+NEXT_PUBLIC_SENTRY_DSN=https://...
+SENTRY_AUTH_TOKEN=...
+```
+
+## Scaling
+
+### Automatic Scaling
+
+Vercel automatically scales your application:
+- Serverless functions scale to zero
+- Edge functions for global distribution
+- Automatic CDN caching
+
+### Database Considerations
+
+For high traffic:
+1. Enable Turso read replicas
+2. Implement caching with Redis
+3. Use database connection pooling
+
+### Cost Optimization
+
+- Use ISR for static pages
+- Implement proper caching headers
+- Optimize images with Next.js Image
+- Monitor function usage
+
+## Troubleshooting
+
+### Build Failures
+
+Common issues:
+- Missing environment variables
+- Type errors (run `npm run build` locally)
+- Dependency issues (check package.json)
+
+### Runtime Errors
+
+1. Check function logs
+2. Verify environment variables
+3. Test webhooks with ngrok locally
+4. Check Sentry for detailed errors
+
+### Performance Issues
+
+- Enable Edge Runtime where possible
+- Implement caching strategies
+- Optimize database queries
+- Use static generation for marketing pages

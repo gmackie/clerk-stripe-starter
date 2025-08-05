@@ -1,0 +1,7 @@
+{
+  "vercel": "Deploy to Vercel",
+  "docker": "Docker Deployment",
+  "kubernetes": "Kubernetes",
+  "environment": "Environment Setup",
+  "ci-cd": "CI/CD Pipeline"
+}

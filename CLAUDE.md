@@ -19,6 +19,7 @@ This is a SaaS starter kit with:
 - `npm run db:studio` - Open Drizzle Studio
 - `npm run db:generate` - Generate database migrations
 - `inngest dev` - Start Inngest dev server for background jobs (separate terminal)
+- `cd docs && npm run dev` - Start documentation site locally
 
 ## Important Files
 - `.env.local` - Environment variables (copy from .env.local.example)
@@ -75,6 +76,7 @@ Use Stripe test card: 4242 4242 4242 4242 with any future expiry date and CVC.
 - **Background Jobs** - Reliable job processing with Inngest (email notifications, file processing, scheduled tasks)
 - **Feature Flags** - Control feature rollout with PostHog (A/B testing, gradual rollouts, user targeting)
 - **Analytics & Monitoring** - Track user behavior and performance with Vercel Analytics & Speed Insights
+- **Documentation Site** - Comprehensive docs with Nextra (run `cd docs && npm run dev`)
 
 ## API Authentication
 API routes support two authentication methods:

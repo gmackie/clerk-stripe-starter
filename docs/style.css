@@ -1,0 +1,79 @@
+/* Custom styles for documentation */
+
+/* Code blocks */
+pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+table th {
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 0.75rem;
+}
+
+table td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem;
+}
+
+/* Callouts */
+.callout {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.callout-info {
+  background-color: #eff6ff;
+  border-left: 4px solid #3b82f6;
+}
+
+.callout-warning {
+  background-color: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+.callout-error {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+}
+
+/* Navigation */
+.nextra-sidebar-container {
+  scrollbar-width: thin;
+}
+
+/* Search */
+.nextra-search input {
+  background-color: #f3f4f6;
+}
+
+/* Dark mode adjustments */
+.dark table th {
+  border-bottom-color: #374151;
+}
+
+.dark table td {
+  border-bottom-color: #374151;
+}
+
+.dark .callout-info {
+  background-color: #1e3a8a;
+}
+
+.dark .callout-warning {
+  background-color: #78350f;
+}
+
+.dark .callout-error {
+  background-color: #7f1d1d;
+}

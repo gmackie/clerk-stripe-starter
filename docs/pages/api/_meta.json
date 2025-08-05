@@ -1,0 +1,8 @@
+{
+  "overview": "Overview",
+  "authentication": "Authentication",
+  "endpoints": "Endpoints",
+  "webhooks": "Webhooks",
+  "rate-limits": "Rate Limits",
+  "errors": "Error Handling"
+}

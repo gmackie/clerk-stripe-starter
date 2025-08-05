@@ -3,6 +3,7 @@
 A production-ready SaaS starter template with authentication, payments, and subscription management.
 
 🚀 **Live Demo**: [https://starter.gmac.io](https://starter.gmac.io)
+📚 **Documentation**: Run `cd docs && npm run dev` to view comprehensive documentation
 
 ## Features
 
