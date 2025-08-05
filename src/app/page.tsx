@@ -25,6 +25,9 @@ export default function Home() {
               <Link href="/pricing" className="text-sm font-semibold leading-6 text-gray-900">
                 View Pricing <span aria-hidden="true">→</span>
               </Link>
+              <Link href="/demo" className="text-sm font-semibold leading-6 text-gray-900">
+                View Demo <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </section>

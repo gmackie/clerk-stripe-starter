@@ -12,7 +12,13 @@
     "db:generate": "drizzle-kit generate",
     "docs:dev": "cd docs && npm run dev",
     "docs:build": "cd docs && npm run build",
-    "docs:install": "cd docs && npm install"
+    "docs:install": "cd docs && npm install",
+    "setup": "node scripts/setup.js",
+    "setup:clean": "rm -f .env.local && node scripts/setup.js",
+    "setup:stripe": "node scripts/init-stripe.js",
+    "setup:demo": "node scripts/seed-demo-data.js",
+    "setup:branding": "node scripts/customize-branding.js",
+    "setup:all": "npm run setup && npm run setup:stripe && npm run setup:demo"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.4",
