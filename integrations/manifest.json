@@ -1,0 +1,634 @@
+{
+  "name": "SaaS Starter Kit",
+  "version": "1.0.0",
+  "description": "Production-ready SaaS starter with modular integrations",
+  "baseTemplate": "nextjs-app-router",
+  "categories": {
+    "authentication": {
+      "name": "Authentication",
+      "description": "User authentication and management",
+      "required": true,
+      "options": [
+        {
+          "id": "clerk",
+          "name": "Clerk",
+          "description": "Complete user management with social logins",
+          "default": true,
+          "dependencies": ["@clerk/nextjs"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+              "description": "Clerk publishable key",
+              "required": true
+            },
+            {
+              "key": "CLERK_SECRET_KEY",
+              "description": "Clerk secret key",
+              "required": true
+            },
+            {
+              "key": "CLERK_WEBHOOK_SECRET",
+              "description": "Clerk webhook signing secret",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/middleware.ts",
+            "src/app/api/webhooks/clerk/route.ts",
+            "src/app/(auth)"
+          ]
+        },
+        {
+          "id": "nextauth",
+          "name": "NextAuth.js",
+          "description": "Flexible authentication with multiple providers",
+          "dependencies": ["next-auth", "@next-auth/prisma-adapter"],
+          "envVars": [
+            {
+              "key": "NEXTAUTH_URL",
+              "description": "NextAuth URL",
+              "required": true
+            },
+            {
+              "key": "NEXTAUTH_SECRET",
+              "description": "NextAuth secret",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/app/api/auth/[...nextauth]/route.ts",
+            "src/lib/auth.ts"
+          ]
+        }
+      ]
+    },
+    "payments": {
+      "name": "Payments",
+      "description": "Payment processing and subscriptions",
+      "required": false,
+      "options": [
+        {
+          "id": "stripe",
+          "name": "Stripe",
+          "description": "Complete payment solution with subscriptions",
+          "default": true,
+          "dependencies": ["stripe", "@stripe/stripe-js"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+              "description": "Stripe publishable key",
+              "required": true
+            },
+            {
+              "key": "STRIPE_SECRET_KEY",
+              "description": "Stripe secret key",
+              "required": true
+            },
+            {
+              "key": "STRIPE_WEBHOOK_SECRET",
+              "description": "Stripe webhook signing secret",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/lib/stripe.ts",
+            "src/app/api/stripe",
+            "src/app/api/webhooks/stripe/route.ts",
+            "src/app/(dashboard)/billing"
+          ],
+          "configuration": {
+            "products": [
+              {
+                "name": "Starter",
+                "price": 19,
+                "interval": "month"
+              },
+              {
+                "name": "Pro",
+                "price": 49,
+                "interval": "month"
+              },
+              {
+                "name": "Enterprise",
+                "price": 199,
+                "interval": "month"
+              }
+            ]
+          }
+        },
+        {
+          "id": "lemonsqueezy",
+          "name": "Lemon Squeezy",
+          "description": "Simple payment processing for digital products",
+          "dependencies": ["@lemonsqueezy/lemonsqueezy.js"],
+          "envVars": [
+            {
+              "key": "LEMONSQUEEZY_API_KEY",
+              "description": "Lemon Squeezy API key",
+              "required": true
+            },
+            {
+              "key": "LEMONSQUEEZY_WEBHOOK_SECRET",
+              "description": "Webhook signing secret",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/lib/lemonsqueezy.ts",
+            "src/app/api/webhooks/lemonsqueezy/route.ts"
+          ]
+        }
+      ]
+    },
+    "database": {
+      "name": "Database",
+      "description": "Data storage and ORM",
+      "required": true,
+      "options": [
+        {
+          "id": "turso",
+          "name": "Turso",
+          "description": "Edge-ready SQLite database",
+          "default": true,
+          "dependencies": ["@libsql/client", "drizzle-orm", "drizzle-kit"],
+          "envVars": [
+            {
+              "key": "TURSO_DATABASE_URL",
+              "description": "Turso database URL",
+              "required": true
+            },
+            {
+              "key": "TURSO_AUTH_TOKEN",
+              "description": "Turso auth token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/db",
+            "drizzle.config.ts"
+          ]
+        },
+        {
+          "id": "supabase",
+          "name": "Supabase",
+          "description": "PostgreSQL with realtime subscriptions",
+          "dependencies": ["@supabase/supabase-js", "@supabase/ssr"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_SUPABASE_URL",
+              "description": "Supabase project URL",
+              "required": true
+            },
+            {
+              "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+              "description": "Supabase anon key",
+              "required": true
+            },
+            {
+              "key": "SUPABASE_SERVICE_ROLE_KEY",
+              "description": "Supabase service role key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/supabase",
+            "src/db/migrations"
+          ]
+        },
+        {
+          "id": "prisma",
+          "name": "Prisma",
+          "description": "Type-safe ORM with any database",
+          "dependencies": ["@prisma/client", "prisma"],
+          "envVars": [
+            {
+              "key": "DATABASE_URL",
+              "description": "Database connection URL",
+              "required": true
+            }
+          ],
+          "files": [
+            "prisma",
+            "src/lib/prisma.ts"
+          ]
+        }
+      ]
+    },
+    "email": {
+      "name": "Email",
+      "description": "Transactional email service",
+      "required": false,
+      "options": [
+        {
+          "id": "resend",
+          "name": "Resend",
+          "description": "Modern email API with React templates",
+          "default": true,
+          "dependencies": ["resend", "react-email", "@react-email/components"],
+          "envVars": [
+            {
+              "key": "RESEND_API_KEY",
+              "description": "Resend API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/email",
+            "src/emails",
+            "src/app/email-preview"
+          ]
+        },
+        {
+          "id": "sendgrid",
+          "name": "SendGrid",
+          "description": "Enterprise email delivery",
+          "dependencies": ["@sendgrid/mail"],
+          "envVars": [
+            {
+              "key": "SENDGRID_API_KEY",
+              "description": "SendGrid API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/sendgrid.ts"
+          ]
+        },
+        {
+          "id": "postmark",
+          "name": "Postmark",
+          "description": "Reliable transactional email",
+          "dependencies": ["postmark"],
+          "envVars": [
+            {
+              "key": "POSTMARK_API_KEY",
+              "description": "Postmark API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/postmark.ts"
+          ]
+        }
+      ]
+    },
+    "storage": {
+      "name": "File Storage",
+      "description": "File uploads and storage",
+      "required": false,
+      "options": [
+        {
+          "id": "cloudinary",
+          "name": "Cloudinary",
+          "description": "Image and video management",
+          "default": true,
+          "dependencies": ["cloudinary", "multer"],
+          "envVars": [
+            {
+              "key": "CLOUDINARY_CLOUD_NAME",
+              "description": "Cloudinary cloud name",
+              "required": true
+            },
+            {
+              "key": "CLOUDINARY_API_KEY",
+              "description": "Cloudinary API key",
+              "required": true
+            },
+            {
+              "key": "CLOUDINARY_API_SECRET",
+              "description": "Cloudinary API secret",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/cloudinary.ts",
+            "src/app/api/upload",
+            "src/components/upload"
+          ]
+        },
+        {
+          "id": "uploadthing",
+          "name": "UploadThing",
+          "description": "Type-safe file uploads",
+          "dependencies": ["uploadthing", "@uploadthing/react"],
+          "envVars": [
+            {
+              "key": "UPLOADTHING_SECRET",
+              "description": "UploadThing secret",
+              "required": true
+            },
+            {
+              "key": "UPLOADTHING_APP_ID",
+              "description": "UploadThing app ID",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/app/api/uploadthing",
+            "src/lib/uploadthing.ts"
+          ]
+        },
+        {
+          "id": "s3",
+          "name": "AWS S3",
+          "description": "Scalable object storage",
+          "dependencies": ["@aws-sdk/client-s3"],
+          "envVars": [
+            {
+              "key": "AWS_ACCESS_KEY_ID",
+              "description": "AWS access key",
+              "required": true
+            },
+            {
+              "key": "AWS_SECRET_ACCESS_KEY",
+              "description": "AWS secret key",
+              "required": true
+            },
+            {
+              "key": "AWS_S3_BUCKET",
+              "description": "S3 bucket name",
+              "required": true
+            },
+            {
+              "key": "AWS_REGION",
+              "description": "AWS region",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/s3.ts",
+            "src/app/api/upload/s3"
+          ]
+        }
+      ]
+    },
+    "analytics": {
+      "name": "Analytics",
+      "description": "User analytics and tracking",
+      "required": false,
+      "options": [
+        {
+          "id": "posthog",
+          "name": "PostHog",
+          "description": "Product analytics and feature flags",
+          "default": true,
+          "dependencies": ["posthog-js", "posthog-node"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_POSTHOG_KEY",
+              "description": "PostHog project API key",
+              "required": true
+            },
+            {
+              "key": "NEXT_PUBLIC_POSTHOG_HOST",
+              "description": "PostHog API host",
+              "required": true,
+              "default": "https://app.posthog.com"
+            }
+          ],
+          "files": [
+            "src/lib/posthog",
+            "src/app/providers.tsx"
+          ]
+        },
+        {
+          "id": "vercel",
+          "name": "Vercel Analytics",
+          "description": "Web vitals and analytics",
+          "dependencies": ["@vercel/analytics", "@vercel/speed-insights"],
+          "envVars": [],
+          "files": [
+            "src/app/layout.tsx"
+          ]
+        },
+        {
+          "id": "plausible",
+          "name": "Plausible",
+          "description": "Privacy-friendly analytics",
+          "dependencies": ["next-plausible"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
+              "description": "Your domain for Plausible",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/app/layout.tsx"
+          ]
+        }
+      ]
+    },
+    "monitoring": {
+      "name": "Error Monitoring",
+      "description": "Error tracking and monitoring",
+      "required": false,
+      "options": [
+        {
+          "id": "sentry",
+          "name": "Sentry",
+          "description": "Error tracking and performance monitoring",
+          "default": true,
+          "dependencies": ["@sentry/nextjs"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_SENTRY_DSN",
+              "description": "Sentry DSN",
+              "required": true
+            },
+            {
+              "key": "SENTRY_ORG",
+              "description": "Sentry organization slug",
+              "required": false
+            },
+            {
+              "key": "SENTRY_PROJECT",
+              "description": "Sentry project slug",
+              "required": false
+            }
+          ],
+          "files": [
+            "sentry.client.config.ts",
+            "sentry.server.config.ts",
+            "sentry.edge.config.ts"
+          ]
+        }
+      ]
+    },
+    "background-jobs": {
+      "name": "Background Jobs",
+      "description": "Task queues and background processing",
+      "required": false,
+      "options": [
+        {
+          "id": "inngest",
+          "name": "Inngest",
+          "description": "Event-driven background jobs",
+          "default": true,
+          "dependencies": ["inngest"],
+          "envVars": [
+            {
+              "key": "INNGEST_SIGNING_KEY",
+              "description": "Inngest signing key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/inngest",
+            "src/app/api/inngest"
+          ]
+        },
+        {
+          "id": "trigger",
+          "name": "Trigger.dev",
+          "description": "Background jobs with workflows",
+          "dependencies": ["@trigger.dev/sdk", "@trigger.dev/nextjs"],
+          "envVars": [
+            {
+              "key": "TRIGGER_API_KEY",
+              "description": "Trigger.dev API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/trigger",
+            "src/app/api/trigger"
+          ]
+        }
+      ]
+    },
+    "rate-limiting": {
+      "name": "Rate Limiting",
+      "description": "API rate limiting",
+      "required": false,
+      "options": [
+        {
+          "id": "upstash",
+          "name": "Upstash Redis",
+          "description": "Serverless Redis for rate limiting",
+          "default": true,
+          "dependencies": ["@upstash/redis", "@upstash/ratelimit"],
+          "envVars": [
+            {
+              "key": "UPSTASH_REDIS_REST_URL",
+              "description": "Upstash Redis URL",
+              "required": true
+            },
+            {
+              "key": "UPSTASH_REDIS_REST_TOKEN",
+              "description": "Upstash Redis token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/rate-limit.ts",
+            "src/middleware.ts"
+          ]
+        }
+      ]
+    },
+    "cms": {
+      "name": "Content Management",
+      "description": "Headless CMS for content",
+      "required": false,
+      "options": [
+        {
+          "id": "sanity",
+          "name": "Sanity",
+          "description": "Flexible content platform",
+          "dependencies": ["@sanity/client", "next-sanity"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_SANITY_PROJECT_ID",
+              "description": "Sanity project ID",
+              "required": true
+            },
+            {
+              "key": "NEXT_PUBLIC_SANITY_DATASET",
+              "description": "Sanity dataset",
+              "required": true
+            },
+            {
+              "key": "SANITY_API_TOKEN",
+              "description": "Sanity API token",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/lib/sanity",
+            "sanity.config.ts"
+          ]
+        },
+        {
+          "id": "contentful",
+          "name": "Contentful",
+          "description": "API-first content platform",
+          "dependencies": ["contentful"],
+          "envVars": [
+            {
+              "key": "CONTENTFUL_SPACE_ID",
+              "description": "Contentful space ID",
+              "required": true
+            },
+            {
+              "key": "CONTENTFUL_ACCESS_TOKEN",
+              "description": "Contentful access token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/contentful.ts"
+          ]
+        }
+      ]
+    }
+  },
+  "templates": {
+    "saas": {
+      "name": "SaaS Application",
+      "description": "Full-featured SaaS with subscriptions",
+      "defaultIntegrations": {
+        "authentication": "clerk",
+        "payments": "stripe",
+        "database": "turso",
+        "email": "resend",
+        "storage": "cloudinary",
+        "analytics": "posthog",
+        "monitoring": "sentry",
+        "background-jobs": "inngest",
+        "rate-limiting": "upstash"
+      }
+    },
+    "minimal": {
+      "name": "Minimal Starter",
+      "description": "Basic setup with auth and database",
+      "defaultIntegrations": {
+        "authentication": "clerk",
+        "database": "turso"
+      }
+    },
+    "ecommerce": {
+      "name": "E-commerce",
+      "description": "Online store with payments",
+      "defaultIntegrations": {
+        "authentication": "clerk",
+        "payments": "stripe",
+        "database": "supabase",
+        "email": "resend",
+        "storage": "cloudinary",
+        "analytics": "posthog",
+        "cms": "sanity"
+      }
+    },
+    "blog": {
+      "name": "Blog/Content Site",
+      "description": "Content-focused website",
+      "defaultIntegrations": {
+        "authentication": "clerk",
+        "database": "turso",
+        "cms": "sanity",
+        "analytics": "plausible"
+      }
+    }
+  }
+}

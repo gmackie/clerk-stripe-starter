@@ -22,6 +22,7 @@
     "deploy:config": "node scripts/deploy-buttons.js"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "@clerk/nextjs": "^6.25.4",
     "@libsql/client": "^0.15.10",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -56,6 +57,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@types/archiver": "^6.0.2",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.9",
