@@ -581,6 +581,407 @@
           ]
         }
       ]
+    },
+    "communication": {
+      "name": "Communication",
+      "description": "Chat, notifications, and messaging",
+      "required": false,
+      "options": [
+        {
+          "id": "twilio",
+          "name": "Twilio",
+          "description": "SMS, voice, and video communication",
+          "dependencies": ["twilio"],
+          "envVars": [
+            {
+              "key": "TWILIO_ACCOUNT_SID",
+              "description": "Twilio account SID",
+              "required": true
+            },
+            {
+              "key": "TWILIO_AUTH_TOKEN",
+              "description": "Twilio auth token",
+              "required": true
+            },
+            {
+              "key": "TWILIO_PHONE_NUMBER",
+              "description": "Twilio phone number",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/twilio.ts",
+            "src/app/api/sms"
+          ]
+        },
+        {
+          "id": "pusher",
+          "name": "Pusher",
+          "description": "Real-time websockets and notifications",
+          "dependencies": ["pusher", "pusher-js"],
+          "envVars": [
+            {
+              "key": "PUSHER_APP_ID",
+              "description": "Pusher app ID",
+              "required": true
+            },
+            {
+              "key": "NEXT_PUBLIC_PUSHER_KEY",
+              "description": "Pusher public key",
+              "required": true
+            },
+            {
+              "key": "PUSHER_SECRET",
+              "description": "Pusher secret",
+              "required": true
+            },
+            {
+              "key": "NEXT_PUBLIC_PUSHER_CLUSTER",
+              "description": "Pusher cluster",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/pusher",
+            "src/hooks/use-pusher.ts"
+          ]
+        },
+        {
+          "id": "slack",
+          "name": "Slack",
+          "description": "Slack notifications and bot integration",
+          "dependencies": ["@slack/web-api", "@slack/bolt"],
+          "envVars": [
+            {
+              "key": "SLACK_BOT_TOKEN",
+              "description": "Slack bot token",
+              "required": true
+            },
+            {
+              "key": "SLACK_SIGNING_SECRET",
+              "description": "Slack signing secret",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/slack.ts",
+            "src/app/api/slack"
+          ]
+        }
+      ]
+    },
+    "search": {
+      "name": "Search",
+      "description": "Full-text search and indexing",
+      "required": false,
+      "options": [
+        {
+          "id": "algolia",
+          "name": "Algolia",
+          "description": "Powerful search API with instant results",
+          "dependencies": ["algoliasearch", "react-instantsearch"],
+          "envVars": [
+            {
+              "key": "ALGOLIA_APP_ID",
+              "description": "Algolia application ID",
+              "required": true
+            },
+            {
+              "key": "ALGOLIA_SEARCH_API_KEY",
+              "description": "Algolia search-only API key",
+              "required": true
+            },
+            {
+              "key": "ALGOLIA_ADMIN_API_KEY",
+              "description": "Algolia admin API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/algolia.ts",
+            "src/components/search"
+          ]
+        },
+        {
+          "id": "meilisearch",
+          "name": "Meilisearch",
+          "description": "Open-source instant search",
+          "dependencies": ["meilisearch"],
+          "envVars": [
+            {
+              "key": "MEILISEARCH_HOST",
+              "description": "Meilisearch host URL",
+              "required": true
+            },
+            {
+              "key": "MEILISEARCH_API_KEY",
+              "description": "Meilisearch API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/meilisearch.ts"
+          ]
+        },
+        {
+          "id": "typesense",
+          "name": "Typesense",
+          "description": "Fast, typo-tolerant search engine",
+          "dependencies": ["typesense"],
+          "envVars": [
+            {
+              "key": "TYPESENSE_HOST",
+              "description": "Typesense host",
+              "required": true
+            },
+            {
+              "key": "TYPESENSE_API_KEY",
+              "description": "Typesense API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/typesense.ts"
+          ]
+        }
+      ]
+    },
+    "ai": {
+      "name": "AI/ML Services",
+      "description": "Artificial intelligence and machine learning",
+      "required": false,
+      "options": [
+        {
+          "id": "openai",
+          "name": "OpenAI",
+          "description": "GPT models and AI capabilities",
+          "dependencies": ["openai"],
+          "envVars": [
+            {
+              "key": "OPENAI_API_KEY",
+              "description": "OpenAI API key",
+              "required": true
+            },
+            {
+              "key": "OPENAI_ORG_ID",
+              "description": "OpenAI organization ID",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/lib/openai.ts",
+            "src/app/api/ai"
+          ]
+        },
+        {
+          "id": "anthropic",
+          "name": "Anthropic",
+          "description": "Claude AI assistant",
+          "dependencies": ["@anthropic-ai/sdk"],
+          "envVars": [
+            {
+              "key": "ANTHROPIC_API_KEY",
+              "description": "Anthropic API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/anthropic.ts"
+          ]
+        },
+        {
+          "id": "replicate",
+          "name": "Replicate",
+          "description": "Run ML models in the cloud",
+          "dependencies": ["replicate"],
+          "envVars": [
+            {
+              "key": "REPLICATE_API_TOKEN",
+              "description": "Replicate API token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/replicate.ts"
+          ]
+        }
+      ]
+    },
+    "support": {
+      "name": "Customer Support",
+      "description": "Help desk and customer support tools",
+      "required": false,
+      "options": [
+        {
+          "id": "intercom",
+          "name": "Intercom",
+          "description": "Customer messaging and support platform",
+          "dependencies": ["intercom-client"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_INTERCOM_APP_ID",
+              "description": "Intercom app ID",
+              "required": true
+            },
+            {
+              "key": "INTERCOM_ACCESS_TOKEN",
+              "description": "Intercom access token",
+              "required": false
+            }
+          ],
+          "files": [
+            "src/lib/intercom.ts",
+            "src/components/intercom-widget.tsx"
+          ]
+        },
+        {
+          "id": "crisp",
+          "name": "Crisp",
+          "description": "Simple and affordable live chat",
+          "dependencies": ["crisp-sdk-web"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_CRISP_WEBSITE_ID",
+              "description": "Crisp website ID",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/components/crisp-chat.tsx"
+          ]
+        },
+        {
+          "id": "zendesk",
+          "name": "Zendesk",
+          "description": "Enterprise customer service platform",
+          "dependencies": ["node-zendesk"],
+          "envVars": [
+            {
+              "key": "ZENDESK_SUBDOMAIN",
+              "description": "Zendesk subdomain",
+              "required": true
+            },
+            {
+              "key": "ZENDESK_USERNAME",
+              "description": "Zendesk username",
+              "required": true
+            },
+            {
+              "key": "ZENDESK_TOKEN",
+              "description": "Zendesk API token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/zendesk.ts"
+          ]
+        }
+      ]
+    },
+    "maps": {
+      "name": "Maps & Location",
+      "description": "Mapping and geolocation services",
+      "required": false,
+      "options": [
+        {
+          "id": "mapbox",
+          "name": "Mapbox",
+          "description": "Custom maps and location services",
+          "dependencies": ["mapbox-gl", "@mapbox/mapbox-sdk"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_MAPBOX_TOKEN",
+              "description": "Mapbox access token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/mapbox.ts",
+            "src/components/map"
+          ]
+        },
+        {
+          "id": "googlemaps",
+          "name": "Google Maps",
+          "description": "Google Maps platform",
+          "dependencies": ["@googlemaps/js-api-loader"],
+          "envVars": [
+            {
+              "key": "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
+              "description": "Google Maps API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/google-maps.ts"
+          ]
+        }
+      ]
+    },
+    "crm": {
+      "name": "CRM Integration",
+      "description": "Customer relationship management",
+      "required": false,
+      "options": [
+        {
+          "id": "hubspot",
+          "name": "HubSpot",
+          "description": "CRM, marketing, and sales platform",
+          "dependencies": ["@hubspot/api-client"],
+          "envVars": [
+            {
+              "key": "HUBSPOT_API_KEY",
+              "description": "HubSpot API key",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/hubspot.ts"
+          ]
+        },
+        {
+          "id": "salesforce",
+          "name": "Salesforce",
+          "description": "Enterprise CRM platform",
+          "dependencies": ["jsforce"],
+          "envVars": [
+            {
+              "key": "SALESFORCE_USERNAME",
+              "description": "Salesforce username",
+              "required": true
+            },
+            {
+              "key": "SALESFORCE_PASSWORD",
+              "description": "Salesforce password",
+              "required": true
+            },
+            {
+              "key": "SALESFORCE_SECURITY_TOKEN",
+              "description": "Salesforce security token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/salesforce.ts"
+          ]
+        },
+        {
+          "id": "pipedrive",
+          "name": "Pipedrive",
+          "description": "Sales-focused CRM",
+          "dependencies": ["pipedrive"],
+          "envVars": [
+            {
+              "key": "PIPEDRIVE_API_TOKEN",
+              "description": "Pipedrive API token",
+              "required": true
+            }
+          ],
+          "files": [
+            "src/lib/pipedrive.ts"
+          ]
+        }
+      ]
     }
   },
   "templates": {

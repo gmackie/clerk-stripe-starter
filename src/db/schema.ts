@@ -100,3 +100,42 @@ export type UsageTracking = typeof usageTracking.$inferSelect;
 export type NewUsageTracking = typeof usageTracking.$inferInsert;
 export type FileUpload = typeof fileUploads.$inferSelect;
 export type NewFileUpload = typeof fileUploads.$inferInsert;
+
+export const webhooks = sqliteTable('webhooks', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  service: text('service').notNull(),
+  url: text('url').notNull(),
+  secret: text('secret'),
+  events: text('events').notNull(), // JSON array
+  active: integer('active', { mode: 'boolean' }).notNull().default(1),
+  lastTriggered: integer('last_triggered', { mode: 'timestamp' }),
+  lastStatus: integer('last_status'),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export const webhookLogs = sqliteTable('webhook_logs', {
+  id: text('id').primaryKey(),
+  webhookId: text('webhook_id')
+    .notNull()
+    .references(() => webhooks.id),
+  event: text('event').notNull(),
+  payload: text('payload').notNull(), // JSON
+  status: integer('status').notNull(),
+  error: text('error'),
+  timestamp: integer('timestamp', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type Webhook = typeof webhooks.$inferSelect;
+export type NewWebhook = typeof webhooks.$inferInsert;
+export type WebhookLog = typeof webhookLogs.$inferSelect;
+export type NewWebhookLog = typeof webhookLogs.$inferInsert;
